@@ -13,6 +13,7 @@ public class Generation {
   public Generation(int generationSize, int chromosomeSize) {
     chromosomes =
         Stream.generate(() -> new Chromosome(chromosomeSize))
+            .parallel()
             .limit(generationSize)
             .collect(Collectors.toList());
   }
@@ -22,15 +23,19 @@ public class Generation {
   }
 
   public Chromosome getFittest() {
-    return chromosomes.stream().min(Comparator.comparing(Chromosome::fitness)).orElseThrow();
+    return chromosomes.stream()
+        .parallel()
+        .min(Comparator.comparing(Chromosome::fitness))
+        .orElseThrow();
   }
 
   public double getAverageFitness() {
-    return chromosomes.stream().mapToDouble(Chromosome::fitness).average().orElseThrow();
+    return chromosomes.stream().parallel().mapToDouble(Chromosome::fitness).average().orElseThrow();
   }
 
   public List<Chromosome> getFittest(int limit) {
     return chromosomes.stream()
+        .parallel()
         .sorted(Comparator.comparing(Chromosome::fitness))
         .limit(limit)
         .toList();
@@ -44,10 +49,9 @@ public class Generation {
     return chromosomes.size();
   }
 
-  // Roulette Wheel Selection
-  public Chromosome select() {
-    double totalFitness = chromosomes.stream().mapToDouble(Chromosome::fitness).sum();
-    double random = Math.random() * totalFitness;
+  private Chromosome select() {
+    double totalFitness = chromosomes.stream().parallel().mapToDouble(Chromosome::fitness).sum();
+    double random = Generation.random.nextDouble() * totalFitness;
     double sum = 0;
     for (Chromosome chromosome : chromosomes) {
       sum += chromosome.fitness();
@@ -58,7 +62,7 @@ public class Generation {
     return chromosomes.get(chromosomes.size() - 1);
   }
 
-  public static Pair<Chromosome> crossover(Chromosome parent1, Chromosome parent2) {
+  private static Pair<Chromosome> crossover(Chromosome parent1, Chromosome parent2) {
     int n = Math.max(parent1.n, parent2.n);
     int[] genes1 = new int[n];
     int[] genes2 = new int[n];
@@ -76,11 +80,11 @@ public class Generation {
 
     this.getFittest(elitism).forEach(nextGeneration::add);
     while (nextGeneration.size() < generationSize) {
-      Chromosome parent1 = this.select();
-      Chromosome parent2 = this.select();
-      Pair<Chromosome> children = Generation.crossover(parent1, parent2);
-      children.first().mutate(mutationRate);
-      children.second().mutate(mutationRate);
+      Chromosome parent1 = select();
+      Chromosome parent2 = select();
+      Pair<Chromosome> children = crossover(parent1, parent2);
+      children.first().mutate1(mutationRate);
+      children.second().mutate1(mutationRate);
       nextGeneration.add(children.first());
       nextGeneration.add(children.second());
     }

@@ -29,18 +29,27 @@ public class Chromosome {
     for (int i = 0; i < points.size(); i++) {
       distances.add(points.get(i).distanceTo(points.get((i + 1) % points.size())));
     }
-    return distances.stream().reduce(0.0, Double::sum);
+    return distances.stream().parallel().reduce(0.0, Double::sum);
   }
 
-  public void mutate(double mutationRate) {
+  public void mutate1(double mutationRate) {
     for (int i = 0; i < genes.length; i++) {
-      if (Math.random() < mutationRate) {
+      if (Generation.random.nextDouble() < mutationRate) {
         int j = Generation.random.nextInt(genes.length);
         int temp = genes[i];
         genes[i] = genes[j];
         genes[j] = temp;
       }
     }
+  }
+
+  public void mutate2(double mutationRate) {
+    int index1 = Generation.random.nextInt(genes.length);
+    int index2 = Generation.random.nextInt(genes.length);
+
+    int temp = genes[index1];
+    genes[index1] = genes[index2];
+    genes[index2] = temp;
   }
 
   @Override

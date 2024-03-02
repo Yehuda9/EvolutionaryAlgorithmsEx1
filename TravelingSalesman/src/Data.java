@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Data {
-  private static final String PATH = "TravelingSalesman/data/tsp.txt";
+  private static final String PATH = "../data/tsp.txt";
 
   private static Data instance = null;
 

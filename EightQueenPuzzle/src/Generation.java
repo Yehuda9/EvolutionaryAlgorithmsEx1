@@ -8,7 +8,7 @@ public class Generation {
   private final List<Chromosome> chromosomes;
 
   public Generation(int size) {
-    chromosomes = Stream.generate(Chromosome::new).limit(size).toList();
+    chromosomes = Stream.generate(Chromosome::new).parallel().limit(size).toList();
   }
 
   public Generation() {
@@ -16,7 +16,10 @@ public class Generation {
   }
 
   public Chromosome getFittest() {
-    return chromosomes.stream().max(Comparator.comparing(Chromosome::fitness)).orElseThrow();
+    return chromosomes.stream()
+        .parallel()
+        .max(Comparator.comparing(Chromosome::fitness))
+        .orElseThrow();
   }
 
   public void add(Chromosome chromosome) {
@@ -29,7 +32,7 @@ public class Generation {
 
   // Roulette Wheel Selection
   public Chromosome select() {
-    double totalFitness = chromosomes.stream().mapToDouble(Chromosome::fitness).sum();
+    double totalFitness = chromosomes.stream().parallel().mapToDouble(Chromosome::fitness).sum();
     double random = Math.random() * totalFitness;
     double sum = 0;
     for (Chromosome chromosome : chromosomes) {
