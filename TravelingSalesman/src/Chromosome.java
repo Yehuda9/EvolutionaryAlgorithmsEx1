@@ -5,7 +5,11 @@ import java.util.List;
 public class Chromosome {
   public final int n;
   private static final Data data = Data.getInstance();
+
+  private final List<Point> points;
   private final int[] genes;
+
+  private Double fitness = null;
 
   public Chromosome(int n) {
     this(Generation.random.ints(0, n).distinct().limit(n).toArray());
@@ -17,6 +21,7 @@ public class Chromosome {
       throw new IllegalArgumentException("Invalid gene value");
     }
     this.genes = genes;
+    this.points = Arrays.stream(genes).mapToObj(data::getPoint).toList();
   }
 
   public int[] getGenes() {
@@ -24,12 +29,18 @@ public class Chromosome {
   }
 
   public double fitness() {
-    List<Point> points = Arrays.stream(genes).mapToObj(data::getPoint).toList();
+    if (fitness == null) {
+      fitness = getFitness();
+    }
+    return fitness;
+  }
+
+  private double getFitness() {
     List<Double> distances = new ArrayList<>();
     for (int i = 0; i < points.size(); i++) {
       distances.add(points.get(i).distanceTo(points.get((i + 1) % points.size())));
     }
-    return distances.stream().parallel().reduce(0.0, Double::sum);
+    return distances.stream().reduce(0.0, Double::sum);
   }
 
   public void mutate1(double mutationRate) {

@@ -13,7 +13,6 @@ public class Generation {
   public Generation(int generationSize, int chromosomeSize) {
     chromosomes =
         Stream.generate(() -> new Chromosome(chromosomeSize))
-            .parallel()
             .limit(generationSize)
             .collect(Collectors.toList());
   }
@@ -23,19 +22,15 @@ public class Generation {
   }
 
   public Chromosome getFittest() {
-    return chromosomes.stream()
-        .parallel()
-        .min(Comparator.comparing(Chromosome::fitness))
-        .orElseThrow();
+    return chromosomes.stream().min(Comparator.comparing(Chromosome::fitness)).orElseThrow();
   }
 
   public double getAverageFitness() {
-    return chromosomes.stream().parallel().mapToDouble(Chromosome::fitness).average().orElseThrow();
+    return chromosomes.stream().mapToDouble(Chromosome::fitness).average().orElseThrow();
   }
 
   public List<Chromosome> getFittest(int limit) {
     return chromosomes.stream()
-        .parallel()
         .sorted(Comparator.comparing(Chromosome::fitness))
         .limit(limit)
         .toList();
@@ -50,7 +45,7 @@ public class Generation {
   }
 
   private Chromosome select() {
-    double totalFitness = chromosomes.stream().parallel().mapToDouble(Chromosome::fitness).sum();
+    double totalFitness = chromosomes.stream().mapToDouble(Chromosome::fitness).sum();
     double random = Generation.random.nextDouble() * totalFitness;
     double sum = 0;
     for (Chromosome chromosome : chromosomes) {

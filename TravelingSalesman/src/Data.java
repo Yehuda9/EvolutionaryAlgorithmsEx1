@@ -37,7 +37,7 @@ public class Data {
   }
 
   private static List<Point> readPoints() throws IOException {
-    BufferedReader reader = new BufferedReader(new FileReader(Data.PATH));
+    BufferedReader reader = new BufferedReader(new FileReader(PATH));
     String line;
     List<Point> points = new ArrayList<>();
     while ((line = reader.readLine()) != null) {

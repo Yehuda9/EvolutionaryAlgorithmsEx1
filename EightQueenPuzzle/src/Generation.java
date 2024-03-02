@@ -16,10 +16,7 @@ public class Generation {
   }
 
   public Chromosome getFittest() {
-    return chromosomes.stream()
-        .parallel()
-        .max(Comparator.comparing(Chromosome::fitness))
-        .orElseThrow();
+    return chromosomes.stream().max(Comparator.comparing(Chromosome::fitness)).orElseThrow();
   }
 
   public void add(Chromosome chromosome) {
