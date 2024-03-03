@@ -211,7 +211,9 @@ public class Main {
                     /* elitism= */ 2,
                     /* maxGenerations= */ 100000));
 
-    ExecutorService executor = Executors.newFixedThreadPool(6);
+    ExecutorService executor =
+        Executors.newFixedThreadPool(
+            (int) (Runtime.getRuntime().availableProcessors() * (3 / 4.0)));
     List<Thread> threads =
         List.of(
             thread1, thread2, thread3, thread4, thread5, thread6, thread7, thread8, thread9,
