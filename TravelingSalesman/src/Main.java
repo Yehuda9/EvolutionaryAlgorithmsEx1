@@ -18,6 +18,7 @@ public class Main {
           new DataLogger(
               String.format("../logs/%s.csv", uuid),
               List.of(
+                  "Time",
                   "Generation",
                   "Best Fitness",
                   "Generation Size",
