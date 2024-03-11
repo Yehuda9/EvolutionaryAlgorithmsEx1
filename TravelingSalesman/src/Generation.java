@@ -1,12 +1,9 @@
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Generation {
-  private static final long SEED = 1709399744310L;
+  private static final long SEED = 3447761810369037120L;
   public static final Random random = new Random(SEED);
   private final List<Chromosome> chromosomes;
 
@@ -45,11 +42,12 @@ public class Generation {
   }
 
   private Chromosome select() {
-    double totalFitness = chromosomes.stream().mapToDouble(Chromosome::fitness).sum();
+    double totalFitness =
+        chromosomes.stream().mapToDouble(Chromosome::fitness).map(d -> 1 / d).sum();
     double random = Generation.random.nextDouble() * totalFitness;
     double sum = 0;
     for (Chromosome chromosome : chromosomes) {
-      sum += chromosome.fitness();
+      sum += 1 / chromosome.fitness();
       if (sum >= random) {
         return chromosome;
       }
@@ -59,27 +57,66 @@ public class Generation {
 
   private static Pair<Chromosome> crossover(Chromosome parent1, Chromosome parent2) {
     int n = Math.max(parent1.n, parent2.n);
-    int[] genes1 = new int[n];
-    int[] genes2 = new int[n];
     int crossoverPoint = random.nextInt(n);
-    for (int i = 0; i < n; i++) {
-      genes1[i] = i <= crossoverPoint ? parent1.getGenes()[i] : parent2.getGenes()[i];
-      genes2[i] = i <= crossoverPoint ? parent2.getGenes()[i] : parent1.getGenes()[i];
-    }
-    return new Pair<>(new Chromosome(genes1), new Chromosome(genes2));
+    List<Integer> genes1 =
+        new ArrayList<>(Arrays.stream(parent1.getGenes(), 0, crossoverPoint).boxed().toList());
+    genes1.addAll(
+        Arrays.stream(parent2.getGenes()).filter(i -> !genes1.contains(i)).boxed().toList());
+
+    List<Integer> genes2 =
+        new ArrayList<>(Arrays.stream(parent2.getGenes(), 0, crossoverPoint).boxed().toList());
+    genes2.addAll(
+        Arrays.stream(parent1.getGenes()).filter(i -> !genes2.contains(i)).boxed().toList());
+
+    return new Pair<>(
+        new Chromosome(genes1.stream().mapToInt(Integer::intValue).toArray()),
+        new Chromosome(genes2.stream().mapToInt(Integer::intValue).toArray()));
   }
 
-  public Generation getNextGeneration(
-      int generationSize, int chromosomeSize, double mutationRate, int elitism) {
-    Generation nextGeneration = new Generation(generationSize, chromosomeSize);
+  public Generation getNextGeneration1(int generationSize, double mutationRate, int elitism) {
+    Generation nextGeneration = new Generation();
 
     this.getFittest(elitism).forEach(nextGeneration::add);
     while (nextGeneration.size() < generationSize) {
       Chromosome parent1 = select();
       Chromosome parent2 = select();
       Pair<Chromosome> children = crossover(parent1, parent2);
-      children.first().mutate1(mutationRate);
-      children.second().mutate1(mutationRate);
+      children.first().mutate2(mutationRate);
+      children.second().mutate2(mutationRate);
+      nextGeneration.add(children.first());
+      nextGeneration.add(children.second());
+
+      /*if (children.first().fitness() <= Math.min(parent1.fitness(), parent2.fitness())) {
+        nextGeneration.add(children.first());
+      }
+      if (children.second().fitness() <= Math.min(parent1.fitness(), parent2.fitness())) {
+        nextGeneration.add(children.second());
+      }*/
+    }
+
+    return nextGeneration;
+  }
+
+  public Generation getNextGeneration2(
+      int generationSize, int chromosomeSize, double mutationRate, int elitism) {
+    int k = (int) (chromosomeSize * (1 / 3.0));
+    Generation nextGeneration = new Generation(generationSize, chromosomeSize);
+
+    this.getFittest(elitism).forEach(nextGeneration::add);
+    while (nextGeneration.size() < generationSize) {
+
+      List<Chromosome> parents = new ArrayList<>(chromosomes);
+      Collections.shuffle(parents);
+      List<Chromosome> selectedParents =
+          parents.stream()
+              .limit(k)
+              .sorted(Comparator.comparing(Chromosome::fitness))
+              .limit(2)
+              .toList();
+
+      Pair<Chromosome> children = crossover(selectedParents.get(0), selectedParents.get(1));
+      children.first().mutate2(mutationRate);
+      children.second().mutate2(mutationRate);
       nextGeneration.add(children.first());
       nextGeneration.add(children.second());
     }

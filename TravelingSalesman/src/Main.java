@@ -32,8 +32,8 @@ public class Main {
     if (dataLogger != null) {
       dataLogger.log(
           List.of(
-              "0",
-              "0",
+              "n/a",
+              "n/a",
               String.valueOf(generationSize),
               String.valueOf(chromosomeSize),
               String.valueOf(mutationRate),
@@ -44,8 +44,7 @@ public class Main {
     Generation generation = new Generation(generationSize, chromosomeSize);
     for (int i = 0; i < maxGenerations; i++) {
       double prevFittest = generation.getFittest().fitness();
-      generation =
-          generation.getNextGeneration(generationSize, chromosomeSize, mutationRate, elitism);
+      generation = generation.getNextGeneration1(generationSize, mutationRate, elitism);
       if (dataLogger != null) {
         dataLogger.log(
             List.of(String.valueOf(i), String.valueOf(generation.getFittest().fitness())));
@@ -212,13 +211,35 @@ public class Main {
                     /* elitism= */ 2,
                     /* maxGenerations= */ 100000));
 
+    Thread thread13 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 2000,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.2,
+                    /* elitism= */ 10,
+                    /* maxGenerations= */ 1000));
+
+    Thread thread14 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 2000,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.2,
+                    /* elitism= */ 10,
+                    /* maxGenerations= */ 2000));
+
     ExecutorService executor =
         Executors.newFixedThreadPool(
             (int) (Runtime.getRuntime().availableProcessors() * (3 / 4.0)));
     List<Thread> threads =
         List.of(
-            thread1, thread2, thread3, thread4, thread5, thread6, thread7, thread8, thread9,
-            thread10, thread11, thread12);
+            thread1, thread2, thread3, thread4, thread5, thread6, /* thread7,
+            thread8,
+            thread9,
+            thread10, thread11, thread12,*/ thread13, thread14);
     for (Thread thread : threads) {
       executor.execute(thread);
     }
