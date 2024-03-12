@@ -43,7 +43,7 @@ public class Generation {
 
   private Chromosome select() {
     double totalFitness =
-        chromosomes.stream().mapToDouble(Chromosome::fitness).map(d -> 1 / d).sum();
+        chromosomes.stream()/*.parallel()*/.mapToDouble(Chromosome::fitness).map(d -> 1 / d).sum();
     double random = Generation.random.nextDouble() * totalFitness;
     double sum = 0;
     for (Chromosome chromosome : chromosomes) {

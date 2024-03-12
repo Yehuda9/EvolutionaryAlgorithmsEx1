@@ -5,23 +5,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Data {
-  private static final String PATH = "../data/tsp.txt";
 
   private static Data instance = null;
 
-  public static Data getInstance() {
+  public static Data getInstance(String path) {
     if (instance == null) {
-      instance = new Data();
+      instance = new Data(path);
     }
     return instance;
   }
 
+  public static Data getInstance() {
+    return instance;
+  }
+
+  public static void init(String path) {
+    instance = new Data(path);
+  }
+
   private final List<Point> points;
 
-  private Data() {
+  private Data(String path) {
     List<Point> p;
     try {
-      p = readPoints();
+      p = readPoints(path);
     } catch (IOException e) {
       p = new ArrayList<>();
     }
@@ -36,8 +43,8 @@ public class Data {
     return points.size();
   }
 
-  private static List<Point> readPoints() throws IOException {
-    BufferedReader reader = new BufferedReader(new FileReader(PATH));
+  private static List<Point> readPoints(String path) throws IOException {
+    BufferedReader reader = new BufferedReader(new FileReader(path));
     String line;
     List<Point> points = new ArrayList<>();
     while ((line = reader.readLine()) != null) {

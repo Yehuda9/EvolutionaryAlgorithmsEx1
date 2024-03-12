@@ -118,10 +118,11 @@ public class BruteForce {
 
   // Driver Code
   public static void main(String[] args) {
-    int chromosomeSize = Integer.parseInt(args[0]);
+    String dataPath = args[0];
+    int chromosomeSize = Integer.parseInt(args[1]);
     // matrix representation of graph
 
-    Data data = Data.getInstance();
+    Data data = Data.getInstance(dataPath);
     double[][] graph = new double[chromosomeSize][chromosomeSize];
     for (int i = 0; i < chromosomeSize; i++) {
       for (int j = 0; j < chromosomeSize; j++) {

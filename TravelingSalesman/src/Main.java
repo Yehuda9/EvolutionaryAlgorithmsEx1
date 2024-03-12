@@ -71,13 +71,7 @@ public class Main {
   }
 
   public static void main(String[] args) throws InterruptedException {
-
-    /*int generationSize = Integer.parseInt(args[0]);
-    int chromosomeSize = Integer.parseInt(args[1]);
-    double mutationRate = Double.parseDouble(args[2]);
-    int elitism = Integer.parseInt(args[3]);
-    int maxGenerations = Integer.parseInt(args[4]);*/
-
+    Data.init(args[0]);
     Logger.getInstance()
         .log(
             String.join(
@@ -231,15 +225,201 @@ public class Main {
                     /* elitism= */ 10,
                     /* maxGenerations= */ 2000));
 
+    Thread thread15 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 2000,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.2,
+                    /* elitism= */ 20,
+                    /* maxGenerations= */ 2000));
+
+    Thread thread16 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 100,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.2,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 100));
+
+    Thread thread17 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 1000,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.2,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 100));
+
+    Thread thread18 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 100,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.2,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 1000));
+
+    Thread thread19 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 100,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.1,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 100));
+
+    Thread thread20 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 1000,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.2,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 1000));
+
+    Thread thread21 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 2000,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.2,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 1000));
+
+    Thread thread22 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 1000,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.2,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 2000));
+
+    Thread thread23 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 2000,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.2,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 2000));
+
+    Thread thread24 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 2000,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.4,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 2000));
+
+    Thread thread25 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 100,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.1,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 100));
+
+    Thread thread26 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 500,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.1,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 100));
+
+    Thread thread27 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 100,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.1,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 500));
+
+    Thread thread28 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 100,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.2,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 100));
+
+    Thread thread29 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 100,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.3,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 100));
+
+    Thread thread30 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 100,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.1,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 1000));
+
+    Thread thread31 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 1000,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.1,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 500));
+
+    Thread thread32 =
+        new Thread(
+            () ->
+                runEvolution(
+                    /* generationSize= */ 100,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.1,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 10000));
+
     ExecutorService executor =
         Executors.newFixedThreadPool(
             (int) (Runtime.getRuntime().availableProcessors() * (3 / 4.0)));
     List<Thread> threads =
-        List.of(
-            thread1, thread2, thread3, thread4, thread5, thread6, /* thread7,
+        List.of(/*thread1, thread2, thread3, thread4, thread5, thread6,  thread7,
             thread8,
             thread9,
-            thread10, thread11, thread12,*/ thread13, thread14);
+            thread10, thread11, thread12, thread13, thread14, thread15 thread16,
+            thread17,
+            thread18,
+            thread19, thread20, thread21, thread22, thread23, thread24 thread25,
+            thread26,
+            thread27,
+            thread28,
+            thread29 thread27, thread30,*/ thread32);
     for (Thread thread : threads) {
       executor.execute(thread);
     }
