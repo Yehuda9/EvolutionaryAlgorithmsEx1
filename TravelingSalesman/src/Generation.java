@@ -117,7 +117,7 @@ public class Generation {
         new Chromosome(genes2.stream().mapToInt(Integer::intValue).toArray()));
   }
 
-  private static Pair<Chromosome> mixedCrossover(Chromosome parent1, Chromosome parent2) {
+  private static Pair<Chromosome> twoPointsCrossover(Chromosome parent1, Chromosome parent2) {
     int crossoverPoint1 = random.nextInt(parent1.size());
     int crossoverPoint2 = random.nextInt(parent2.size());
     while (crossoverPoint1 == crossoverPoint2) {
@@ -206,7 +206,7 @@ public class Generation {
       }
       Chromosome parent1 = tournamentSelection();
       Chromosome parent2 = tournamentSelection();
-      Pair<Chromosome> children = mixedCrossover(parent1, parent2);
+      Pair<Chromosome> children = twoPointsCrossover(parent1, parent2);
 
       nextGeneration.add(children.first().mutate(mutationRate));
       nextGeneration.add(children.second().mutate(mutationRate));
