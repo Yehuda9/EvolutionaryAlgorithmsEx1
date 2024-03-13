@@ -6,6 +6,8 @@ public class Chromosome {
 
   private final int[] genes;
 
+  private Double fitness = null;
+
   public Chromosome(int n) {
     this(Generation.random.ints(0, n).distinct().limit(n).toArray());
   }
@@ -21,7 +23,7 @@ public class Chromosome {
   }
 
   public int[] getGenes() {
-    return genes;
+    return Arrays.copyOf(genes, genes.length);
   }
 
   public int size() {
@@ -29,6 +31,10 @@ public class Chromosome {
   }
 
   public double fitness() {
+    return fitness != null ? fitness : (fitness = getFitness());
+  }
+
+  private double getFitness() {
     List<Point> points = Arrays.stream(genes).mapToObj(data::getPoint).toList();
     double distance = 0;
     for (int i = 0; i < points.size(); i++) {
@@ -37,21 +43,23 @@ public class Chromosome {
     return distance;
   }
 
-  public void mutate(double mutationRate) {
+  public Chromosome mutate(double mutationRate) {
+    int[] newGenes = Arrays.copyOf(genes, genes.length);
     if (Generation.random.nextDouble() < mutationRate) {
       while (true) {
-        int index1 = Generation.random.nextInt(genes.length);
-        int index2 = Generation.random.nextInt(genes.length);
+        int index1 = Generation.random.nextInt(newGenes.length);
+        int index2 = Generation.random.nextInt(newGenes.length);
 
         if (index1 != index2) {
-          int temp = genes[index1];
-          genes[index1] = genes[index2];
-          genes[index2] = temp;
+          int temp = newGenes[index1];
+          newGenes[index1] = newGenes[index2];
+          newGenes[index2] = temp;
 
           break;
         }
       }
     }
+    return new Chromosome(newGenes);
   }
 
   @Override

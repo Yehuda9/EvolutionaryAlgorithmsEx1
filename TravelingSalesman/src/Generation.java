@@ -145,10 +145,9 @@ public class Generation {
       Chromosome parent1 = rankSelection();
       Chromosome parent2 = rankSelection();
       Pair<Chromosome> children = crossover(parent1, parent2);
-      children.first().mutate(mutationRate);
-      children.second().mutate(mutationRate);
-      nextGeneration.add(children.first());
-      nextGeneration.add(children.second());
+
+      nextGeneration.add(children.first().mutate(mutationRate));
+      nextGeneration.add(children.second().mutate(mutationRate));
     }
 
     return nextGeneration;

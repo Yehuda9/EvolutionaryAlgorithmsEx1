@@ -25,6 +25,7 @@ public class Main {
                   "Generation Size",
                   "Chromosome Size",
                   "Mutation Rate",
+                  "Crossover Rate",
                   "Elitism",
                   "Max Generations"));
     } catch (IOException e) {
@@ -94,12 +95,12 @@ public class Main {
         new Thread(
             () ->
                 runEvolution(
-                    /* generationSize= */ 100,
+                    /* generationSize= */ 2,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.01,
                     /* crossoverRate= */ 0.5,
                     /* elitism= */ 2,
-                    /* maxGenerations= */ 100));
+                    /* maxGenerations= */ 1));
 
     Thread thread2 =
         new Thread(
