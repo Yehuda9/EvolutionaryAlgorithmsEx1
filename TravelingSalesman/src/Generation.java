@@ -209,7 +209,7 @@ public class Generation {
       Pair<Chromosome> children = mixedCrossover(parent1, parent2);
 
       nextGeneration.add(children.first().mutate(mutationRate));
-      nextGeneration.add(children.second()/*.mutate(mutationRate)*/);
+      nextGeneration.add(children.second().mutate(mutationRate));
     }
 
     return nextGeneration;
