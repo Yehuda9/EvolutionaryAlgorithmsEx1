@@ -75,6 +75,14 @@ public class Generation {
             .collect(Collectors.toMap(chromosomes::get, probabilities::get)));
   }
 
+  private Chromosome tournamentSelection() {
+    int tournamentSize = 4;
+    List<Chromosome> tournament = new ArrayList<>();
+    IntStream.range(0, tournamentSize)
+        .forEach(i -> tournament.add(chromosomes.get(random.nextInt(chromosomes.size()))));
+    return tournament.stream().min(Comparator.comparing(Chromosome::fitness)).orElseThrow();
+  }
+
   private static Chromosome select(Map<Chromosome, Double> chromosomeByProbability) {
     double probabilitiesSum = chromosomeByProbability.values().stream().reduce(0.0, Double::sum);
     double random = Generation.random.nextDouble() * probabilitiesSum;
@@ -92,7 +100,7 @@ public class Generation {
         .getKey();
   }
 
-  private static Pair<Chromosome> crossover(Chromosome parent1, Chromosome parent2) {
+  private static Pair<Chromosome> singlePointCrossover(Chromosome parent1, Chromosome parent2) {
     int crossoverPoint = random.nextInt(Math.max(parent1.size(), parent2.size()));
     List<Integer> genes1 =
         new ArrayList<>(Arrays.stream(parent1.getGenes(), 0, crossoverPoint).boxed().toList());
@@ -109,6 +117,40 @@ public class Generation {
         new Chromosome(genes2.stream().mapToInt(Integer::intValue).toArray()));
   }
 
+  private static Pair<Chromosome> mixedCrossover(Chromosome parent1, Chromosome parent2) {
+    int crossoverPoint1 = random.nextInt(parent1.size());
+    int crossoverPoint2 = random.nextInt(parent2.size());
+    while (crossoverPoint1 == crossoverPoint2) {
+      crossoverPoint1 = random.nextInt(parent1.size());
+      crossoverPoint2 = random.nextInt(parent2.size());
+    }
+
+    int start = Math.min(crossoverPoint1, crossoverPoint2);
+    int end = Math.max(crossoverPoint1, crossoverPoint2);
+
+    List<Integer> parent1Genes = Arrays.stream(parent1.getGenes()).boxed().toList();
+    List<Integer> parent2Genes = Arrays.stream(parent2.getGenes()).boxed().toList();
+
+    List<Integer> child11 = new ArrayList<>(parent1Genes.subList(0, start));
+    List<Integer> child12 = new ArrayList<>(parent1Genes.subList(end, parent2Genes.size()));
+    List<Integer> child1 =
+        new ArrayList<>(Stream.concat(child11.stream(), child12.stream()).toList());
+    List<Integer> child2 = new ArrayList<>(parent2Genes.subList(start, end));
+
+    List<Integer> child1Remain = parent2Genes.stream().filter(i -> !child1.contains(i)).toList();
+    List<Integer> child2Remain = parent1Genes.stream().filter(i -> !child2.contains(i)).toList();
+
+    child1.clear();
+    child1.addAll(child11);
+    child1.addAll(child1Remain);
+    child1.addAll(child12);
+    child2.addAll(child2Remain);
+
+    return new Pair<>(
+        new Chromosome(child1.stream().mapToInt(Integer::intValue).toArray()),
+        new Chromosome(child2.stream().mapToInt(Integer::intValue).toArray()));
+  }
+
   public Generation getNextGeneration1(int generationSize, double mutationRate, int elitism) {
     Generation nextGeneration = new Generation();
 
@@ -116,7 +158,7 @@ public class Generation {
     while (nextGeneration.size() < generationSize) {
       Chromosome parent1 = rouletteWheelSelection();
       Chromosome parent2 = rouletteWheelSelection();
-      Pair<Chromosome> children = crossover(parent1, parent2);
+      Pair<Chromosome> children = singlePointCrossover(parent1, parent2);
       children.first().mutate(mutationRate);
       children.second().mutate(mutationRate);
       nextGeneration.add(children.first());
@@ -144,10 +186,30 @@ public class Generation {
       }
       Chromosome parent1 = rankSelection();
       Chromosome parent2 = rankSelection();
-      Pair<Chromosome> children = crossover(parent1, parent2);
+      Pair<Chromosome> children = singlePointCrossover(parent1, parent2);
 
       nextGeneration.add(children.first().mutate(mutationRate));
       nextGeneration.add(children.second().mutate(mutationRate));
+    }
+
+    return nextGeneration;
+  }
+
+  public Generation getNextGeneration3(
+      int generationSize, double mutationRate, double crossoverRate, int elitism) {
+    Generation nextGeneration = new Generation();
+
+    this.getFittest(elitism).forEach(nextGeneration::add);
+    while (nextGeneration.size() < generationSize) {
+      if (random.nextDouble() > crossoverRate) {
+        continue;
+      }
+      Chromosome parent1 = tournamentSelection();
+      Chromosome parent2 = tournamentSelection();
+      Pair<Chromosome> children = mixedCrossover(parent1, parent2);
+
+      nextGeneration.add(children.first().mutate(mutationRate));
+      nextGeneration.add(children.second()/*.mutate(mutationRate)*/);
     }
 
     return nextGeneration;

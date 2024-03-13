@@ -13,7 +13,7 @@ public class Chromosome {
   }
 
   public Chromosome(int[] genes) {
-    if (Arrays.stream(genes).anyMatch(gene -> gene < 0 || gene >= genes.length)) {
+    if (Arrays.stream(genes).anyMatch(gene -> gene < 0 || gene > genes.length)) {
       throw new IllegalArgumentException("Invalid gene value");
     }
     if (Arrays.stream(genes).distinct().count() != genes.length) {
@@ -44,20 +44,18 @@ public class Chromosome {
   }
 
   public Chromosome mutate(double mutationRate) {
-    int[] newGenes = Arrays.copyOf(genes, genes.length);
+    int[] newGenes = getGenes();
     if (Generation.random.nextDouble() < mutationRate) {
-      while (true) {
-        int index1 = Generation.random.nextInt(newGenes.length);
-        int index2 = Generation.random.nextInt(newGenes.length);
-
-        if (index1 != index2) {
-          int temp = newGenes[index1];
-          newGenes[index1] = newGenes[index2];
-          newGenes[index2] = temp;
-
-          break;
-        }
+      int index1 = Generation.random.nextInt(newGenes.length);
+      int index2 = Generation.random.nextInt(newGenes.length);
+      while (index1 == index2) {
+        index1 = Generation.random.nextInt(newGenes.length);
+        index2 = Generation.random.nextInt(newGenes.length);
       }
+
+      int temp = newGenes[index1];
+      newGenes[index1] = newGenes[index2];
+      newGenes[index2] = temp;
     }
     return new Chromosome(newGenes);
   }

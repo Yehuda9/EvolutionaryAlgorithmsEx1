@@ -48,7 +48,7 @@ public class Main {
     for (int i = 0; i < maxGenerations; i++) {
       double prevFittest = generation.getFittest().fitness();
       generation =
-          generation.getNextGeneration2(generationSize, mutationRate, crossoverRate, elitism);
+          generation.getNextGeneration3(generationSize, mutationRate, crossoverRate, elitism);
       if (dataLogger != null) {
         dataLogger.log(
             List.of(String.valueOf(i), String.valueOf(generation.getFittest().fitness())));
@@ -194,7 +194,7 @@ public class Main {
         new Thread(
             () ->
                 runEvolution(
-                    /* generationSize= */ 1000,
+                    /* generationSize= */ 500,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.2,
                     /* crossoverRate= */ 1,
