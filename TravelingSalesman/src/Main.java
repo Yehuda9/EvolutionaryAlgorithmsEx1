@@ -194,12 +194,12 @@ public class Main {
         new Thread(
             () ->
                 runEvolution(
-                    /* generationSize= */ 500,
+                    /* generationSize= */ 1000,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.2,
                     /* crossoverRate= */ 1,
                     /* elitism= */ 2,
-                    /* maxGenerations= */ 1000));
+                    /* maxGenerations= */ 500));
 
     Thread thread11 =
         new Thread(

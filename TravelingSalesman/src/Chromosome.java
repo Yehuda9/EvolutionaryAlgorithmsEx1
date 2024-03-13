@@ -1,28 +1,30 @@
 import java.util.Arrays;
-import java.util.List;
 
 public class Chromosome {
   private static final Data data = Data.getInstance();
 
-  private final int[] genes;
+  private final Point[] genes;
 
   private Double fitness = null;
 
   public Chromosome(int n) {
-    this(Generation.random.ints(0, n).distinct().limit(n).toArray());
+    this(
+        Generation.random
+            .ints(0, n)
+            .distinct()
+            .limit(n)
+            .mapToObj(data::getPoint)
+            .toArray(Point[]::new));
   }
 
-  public Chromosome(int[] genes) {
-    if (Arrays.stream(genes).anyMatch(gene -> gene < 0 || gene > genes.length)) {
-      throw new IllegalArgumentException("Invalid gene value");
-    }
+  public Chromosome(Point[] genes) {
     if (Arrays.stream(genes).distinct().count() != genes.length) {
       throw new IllegalArgumentException("Duplicate gene value");
     }
     this.genes = genes;
   }
 
-  public int[] getGenes() {
+  public Point[] getGenes() {
     return Arrays.copyOf(genes, genes.length);
   }
 
@@ -35,16 +37,15 @@ public class Chromosome {
   }
 
   private double getFitness() {
-    List<Point> points = Arrays.stream(genes).mapToObj(data::getPoint).toList();
     double distance = 0;
-    for (int i = 0; i < points.size(); i++) {
-      distance += points.get(i).distanceTo(points.get((i + 1) % points.size()));
+    for (int i = 0; i < genes.length; i++) {
+      distance += genes[i].distanceTo(genes[(i + 1) % genes.length]);
     }
     return distance;
   }
 
   public Chromosome mutate(double mutationRate) {
-    int[] newGenes = getGenes();
+    Point[] newGenes = getGenes();
     if (Generation.random.nextDouble() < mutationRate) {
       int index1 = Generation.random.nextInt(newGenes.length);
       int index2 = Generation.random.nextInt(newGenes.length);
@@ -53,7 +54,7 @@ public class Chromosome {
         index2 = Generation.random.nextInt(newGenes.length);
       }
 
-      int temp = newGenes[index1];
+      Point temp = newGenes[index1];
       newGenes[index1] = newGenes[index2];
       newGenes[index2] = temp;
     }

@@ -102,19 +102,16 @@ public class Generation {
 
   private static Pair<Chromosome> singlePointCrossover(Chromosome parent1, Chromosome parent2) {
     int crossoverPoint = random.nextInt(Math.max(parent1.size(), parent2.size()));
-    List<Integer> genes1 =
-        new ArrayList<>(Arrays.stream(parent1.getGenes(), 0, crossoverPoint).boxed().toList());
-    genes1.addAll(
-        Arrays.stream(parent2.getGenes()).filter(i -> !genes1.contains(i)).boxed().toList());
+    List<Point> genes1 =
+        new ArrayList<>(Arrays.stream(parent1.getGenes(), 0, crossoverPoint).toList());
+    genes1.addAll(Arrays.stream(parent2.getGenes()).filter(i -> !genes1.contains(i)).toList());
 
-    List<Integer> genes2 =
-        new ArrayList<>(Arrays.stream(parent2.getGenes(), 0, crossoverPoint).boxed().toList());
-    genes2.addAll(
-        Arrays.stream(parent1.getGenes()).filter(i -> !genes2.contains(i)).boxed().toList());
+    List<Point> genes2 =
+        new ArrayList<>(Arrays.stream(parent2.getGenes(), 0, crossoverPoint).toList());
+    genes2.addAll(Arrays.stream(parent1.getGenes()).filter(i -> !genes2.contains(i)).toList());
 
     return new Pair<>(
-        new Chromosome(genes1.stream().mapToInt(Integer::intValue).toArray()),
-        new Chromosome(genes2.stream().mapToInt(Integer::intValue).toArray()));
+        new Chromosome(genes1.toArray(Point[]::new)), new Chromosome(genes2.toArray(Point[]::new)));
   }
 
   private static Pair<Chromosome> twoPointsCrossover(Chromosome parent1, Chromosome parent2) {
@@ -128,17 +125,17 @@ public class Generation {
     int start = Math.min(crossoverPoint1, crossoverPoint2);
     int end = Math.max(crossoverPoint1, crossoverPoint2);
 
-    List<Integer> parent1Genes = Arrays.stream(parent1.getGenes()).boxed().toList();
-    List<Integer> parent2Genes = Arrays.stream(parent2.getGenes()).boxed().toList();
+    List<Point> parent1Genes = Arrays.stream(parent1.getGenes()).toList();
+    List<Point> parent2Genes = Arrays.stream(parent2.getGenes()).toList();
 
-    List<Integer> child11 = new ArrayList<>(parent1Genes.subList(0, start));
-    List<Integer> child12 = new ArrayList<>(parent1Genes.subList(end, parent2Genes.size()));
-    List<Integer> child1 =
+    List<Point> child11 = new ArrayList<>(parent1Genes.subList(0, start));
+    List<Point> child12 = new ArrayList<>(parent1Genes.subList(end, parent2Genes.size()));
+    List<Point> child1 =
         new ArrayList<>(Stream.concat(child11.stream(), child12.stream()).toList());
-    List<Integer> child2 = new ArrayList<>(parent2Genes.subList(start, end));
+    List<Point> child2 = new ArrayList<>(parent2Genes.subList(start, end));
 
-    List<Integer> child1Remain = parent2Genes.stream().filter(i -> !child1.contains(i)).toList();
-    List<Integer> child2Remain = parent1Genes.stream().filter(i -> !child2.contains(i)).toList();
+    List<Point> child1Remain = parent2Genes.stream().filter(i -> !child1.contains(i)).toList();
+    List<Point> child2Remain = parent1Genes.stream().filter(i -> !child2.contains(i)).toList();
 
     child1.clear();
     child1.addAll(child11);
@@ -147,8 +144,7 @@ public class Generation {
     child2.addAll(child2Remain);
 
     return new Pair<>(
-        new Chromosome(child1.stream().mapToInt(Integer::intValue).toArray()),
-        new Chromosome(child2.stream().mapToInt(Integer::intValue).toArray()));
+        new Chromosome(child1.toArray(Point[]::new)), new Chromosome(child2.toArray(Point[]::new)));
   }
 
   public Generation getNextGeneration1(int generationSize, double mutationRate, int elitism) {
