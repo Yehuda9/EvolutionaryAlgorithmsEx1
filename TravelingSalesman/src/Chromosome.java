@@ -2,7 +2,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Chromosome {
-  public final int n;
   private static final Data data = Data.getInstance();
 
   private final int[] genes;
@@ -12,11 +11,10 @@ public class Chromosome {
   }
 
   public Chromosome(int[] genes) {
-    this.n = genes.length;
-    if (Arrays.stream(genes).anyMatch(gene -> gene < 0 || gene >= n)) {
+    if (Arrays.stream(genes).anyMatch(gene -> gene < 0 || gene >= genes.length)) {
       throw new IllegalArgumentException("Invalid gene value");
     }
-    if (Arrays.stream(genes).distinct().count() != n) {
+    if (Arrays.stream(genes).distinct().count() != genes.length) {
       throw new IllegalArgumentException("Duplicate gene value");
     }
     this.genes = genes;
@@ -24,6 +22,10 @@ public class Chromosome {
 
   public int[] getGenes() {
     return genes;
+  }
+
+  public int size() {
+    return genes.length;
   }
 
   public double fitness() {
@@ -35,21 +37,7 @@ public class Chromosome {
     return distance;
   }
 
-  public void mutate1(double mutationRate) {
-    for (int i = 0; i < genes.length; i++) {
-      if (Generation.random.nextDouble() < mutationRate) {
-        int j;
-        do {
-          j = Generation.random.nextInt(genes.length);
-        } while (i == j);
-        int temp = genes[i];
-        genes[i] = genes[j];
-        genes[j] = temp;
-      }
-    }
-  }
-
-  public void mutate2(double mutationRate) {
+  public void mutate(double mutationRate) {
     if (Generation.random.nextDouble() < mutationRate) {
       while (true) {
         int index1 = Generation.random.nextInt(genes.length);
