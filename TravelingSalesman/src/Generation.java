@@ -82,9 +82,12 @@ public class Generation {
       Chromosome parent2,
       Config.CrossoverType crossoverType,
       double crossoverRate) {
+    if (Main.random.nextDouble() > crossoverRate) {
+      return new Pair<>(parent1, parent2);
+    }
     return switch (crossoverType) {
-      case SinglePoint -> singlePointCrossover(parent1, parent2, crossoverRate);
-      case TwoPoints -> twoPointsCrossover(parent1, parent2, crossoverRate);
+      case SinglePoint -> singlePointCrossover(parent1, parent2);
+      case TwoPoints -> twoPointsCrossover(parent1, parent2);
     };
   }
 
@@ -105,11 +108,7 @@ public class Generation {
         .getKey();
   }
 
-  private static Pair<Chromosome> singlePointCrossover(
-      Chromosome parent1, Chromosome parent2, double crossoverRate) {
-    if (Main.random.nextDouble() > crossoverRate) {
-      return new Pair<>(parent1, parent2);
-    }
+  private static Pair<Chromosome> singlePointCrossover(Chromosome parent1, Chromosome parent2) {
     int crossoverPoint = Main.random.nextInt(Math.max(parent1.size(), parent2.size()));
     List<Point> genes1 =
         new ArrayList<>(Arrays.stream(parent1.getGenes(), 0, crossoverPoint).toList());
@@ -123,11 +122,7 @@ public class Generation {
         new Chromosome(genes1.toArray(Point[]::new)), new Chromosome(genes2.toArray(Point[]::new)));
   }
 
-  private static Pair<Chromosome> twoPointsCrossover(
-      Chromosome parent1, Chromosome parent2, double crossoverRate) {
-    if (Main.random.nextDouble() > crossoverRate) {
-      return new Pair<>(parent1, parent2);
-    }
+  private static Pair<Chromosome> twoPointsCrossover(Chromosome parent1, Chromosome parent2) {
     int crossoverPoint1 = Main.random.nextInt(parent1.size());
     int crossoverPoint2 = Main.random.nextInt(parent2.size());
     while (crossoverPoint1 == crossoverPoint2) {
@@ -179,9 +174,6 @@ public class Generation {
 
     this.getFittest(elitism).forEach(nextGeneration::add);
     while (nextGeneration.size() < generationSize) {
-      if (Main.random.nextDouble() > crossoverRate) {
-        continue;
-      }
       Chromosome parent1 = select(selectionType);
       Chromosome parent2 = select(selectionType);
       Pair<Chromosome> children = crossover(parent1, parent2, crossoverType, crossoverRate);
