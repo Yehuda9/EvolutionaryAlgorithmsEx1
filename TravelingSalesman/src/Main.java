@@ -1,10 +1,15 @@
 import java.io.*;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
+
+  private static final long SEED = 3447761810369037120L;
+  public static final Random random = new Random(SEED);
+
   public static void runEvolution(
       int generationSize,
       int chromosomeSize,

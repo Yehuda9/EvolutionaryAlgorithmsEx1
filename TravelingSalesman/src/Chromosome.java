@@ -8,13 +8,7 @@ public class Chromosome {
   private Double fitness = null;
 
   public Chromosome(int n) {
-    this(
-        Generation.random
-            .ints(0, n)
-            .distinct()
-            .limit(n)
-            .mapToObj(data::getPoint)
-            .toArray(Point[]::new));
+    this(Main.random.ints(0, n).distinct().limit(n).mapToObj(data::getPoint).toArray(Point[]::new));
   }
 
   public Chromosome(Point[] genes) {
@@ -46,12 +40,12 @@ public class Chromosome {
 
   public Chromosome mutate(double mutationRate) {
     Point[] newGenes = getGenes();
-    if (Generation.random.nextDouble() < mutationRate) {
-      int index1 = Generation.random.nextInt(newGenes.length);
-      int index2 = Generation.random.nextInt(newGenes.length);
+    if (Main.random.nextDouble() < mutationRate) {
+      int index1 = Main.random.nextInt(newGenes.length);
+      int index2 = Main.random.nextInt(newGenes.length);
       while (index1 == index2) {
-        index1 = Generation.random.nextInt(newGenes.length);
-        index2 = Generation.random.nextInt(newGenes.length);
+        index1 = Main.random.nextInt(newGenes.length);
+        index2 = Main.random.nextInt(newGenes.length);
       }
 
       Point temp = newGenes[index1];

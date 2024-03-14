@@ -4,8 +4,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Generation {
-  private static final long SEED = 3447761810369037120L;
-  public static final Random random = new Random(SEED);
   private final List<Chromosome> chromosomes;
 
   public Generation(int generationSize, int chromosomeSize) {
@@ -79,13 +77,13 @@ public class Generation {
     int tournamentSize = 4;
     List<Chromosome> tournament = new ArrayList<>();
     IntStream.range(0, tournamentSize)
-        .forEach(i -> tournament.add(chromosomes.get(random.nextInt(chromosomes.size()))));
+        .forEach(i -> tournament.add(chromosomes.get(Main.random.nextInt(chromosomes.size()))));
     return tournament.stream().min(Comparator.comparing(Chromosome::fitness)).orElseThrow();
   }
 
   private static Chromosome select(Map<Chromosome, Double> chromosomeByProbability) {
     double probabilitiesSum = chromosomeByProbability.values().stream().reduce(0.0, Double::sum);
-    double random = Generation.random.nextDouble() * probabilitiesSum;
+    double random = Main.random.nextDouble() * probabilitiesSum;
     double sum = 0;
     for (Map.Entry<Chromosome, Double> entry : chromosomeByProbability.entrySet()) {
       sum += entry.getValue();
@@ -101,7 +99,7 @@ public class Generation {
   }
 
   private static Pair<Chromosome> singlePointCrossover(Chromosome parent1, Chromosome parent2) {
-    int crossoverPoint = random.nextInt(Math.max(parent1.size(), parent2.size()));
+    int crossoverPoint = Main.random.nextInt(Math.max(parent1.size(), parent2.size()));
     List<Point> genes1 =
         new ArrayList<>(Arrays.stream(parent1.getGenes(), 0, crossoverPoint).toList());
     genes1.addAll(Arrays.stream(parent2.getGenes()).filter(i -> !genes1.contains(i)).toList());
@@ -115,11 +113,11 @@ public class Generation {
   }
 
   private static Pair<Chromosome> twoPointsCrossover(Chromosome parent1, Chromosome parent2) {
-    int crossoverPoint1 = random.nextInt(parent1.size());
-    int crossoverPoint2 = random.nextInt(parent2.size());
+    int crossoverPoint1 = Main.random.nextInt(parent1.size());
+    int crossoverPoint2 = Main.random.nextInt(parent2.size());
     while (crossoverPoint1 == crossoverPoint2) {
-      crossoverPoint1 = random.nextInt(parent1.size());
-      crossoverPoint2 = random.nextInt(parent2.size());
+      crossoverPoint1 = Main.random.nextInt(parent1.size());
+      crossoverPoint2 = Main.random.nextInt(parent2.size());
     }
 
     int start = Math.min(crossoverPoint1, crossoverPoint2);
@@ -177,7 +175,7 @@ public class Generation {
 
     this.getFittest(elitism).forEach(nextGeneration::add);
     while (nextGeneration.size() < generationSize) {
-      if (random.nextDouble() > crossoverRate) {
+      if (Main.random.nextDouble() > crossoverRate) {
         continue;
       }
       Chromosome parent1 = rankSelection();
@@ -197,7 +195,7 @@ public class Generation {
 
     this.getFittest(elitism).forEach(nextGeneration::add);
     while (nextGeneration.size() < generationSize) {
-      if (random.nextDouble() > crossoverRate) {
+      if (Main.random.nextDouble() > crossoverRate) {
         continue;
       }
       Chromosome parent1 = tournamentSelection();
