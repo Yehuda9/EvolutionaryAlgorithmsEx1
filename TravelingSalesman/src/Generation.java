@@ -98,7 +98,11 @@ public class Generation {
         .getKey();
   }
 
-  private static Pair<Chromosome> singlePointCrossover(Chromosome parent1, Chromosome parent2) {
+  private static Pair<Chromosome> singlePointCrossover(
+      Chromosome parent1, Chromosome parent2, double crossoverRate) {
+    if (Main.random.nextDouble() > crossoverRate) {
+      return new Pair<>(parent1, parent2);
+    }
     int crossoverPoint = Main.random.nextInt(Math.max(parent1.size(), parent2.size()));
     List<Point> genes1 =
         new ArrayList<>(Arrays.stream(parent1.getGenes(), 0, crossoverPoint).toList());
@@ -112,7 +116,11 @@ public class Generation {
         new Chromosome(genes1.toArray(Point[]::new)), new Chromosome(genes2.toArray(Point[]::new)));
   }
 
-  private static Pair<Chromosome> twoPointsCrossover(Chromosome parent1, Chromosome parent2) {
+  private static Pair<Chromosome> twoPointsCrossover(
+      Chromosome parent1, Chromosome parent2, double crossoverRate) {
+    if (Main.random.nextDouble() > crossoverRate) {
+      return new Pair<>(parent1, parent2);
+    }
     int crossoverPoint1 = Main.random.nextInt(parent1.size());
     int crossoverPoint2 = Main.random.nextInt(parent2.size());
     while (crossoverPoint1 == crossoverPoint2) {
@@ -156,7 +164,7 @@ public class Generation {
       }
       Chromosome parent1 = rouletteWheelSelection();
       Chromosome parent2 = rouletteWheelSelection();
-      Pair<Chromosome> children = singlePointCrossover(parent1, parent2);
+      Pair<Chromosome> children = singlePointCrossover(parent1, parent2, crossoverRate);
 
       nextGeneration.add(children.first().mutate(mutationRate));
       nextGeneration.add(children.second().mutate(mutationRate));
@@ -176,7 +184,7 @@ public class Generation {
       }
       Chromosome parent1 = rankSelection();
       Chromosome parent2 = rankSelection();
-      Pair<Chromosome> children = singlePointCrossover(parent1, parent2);
+      Pair<Chromosome> children = singlePointCrossover(parent1, parent2, crossoverRate);
 
       nextGeneration.add(children.first().mutate(mutationRate));
       nextGeneration.add(children.second().mutate(mutationRate));
@@ -196,7 +204,7 @@ public class Generation {
       }
       Chromosome parent1 = tournamentSelection();
       Chromosome parent2 = tournamentSelection();
-      Pair<Chromosome> children = twoPointsCrossover(parent1, parent2);
+      Pair<Chromosome> children = twoPointsCrossover(parent1, parent2, crossoverRate);
 
       nextGeneration.add(children.first().mutate(mutationRate));
       nextGeneration.add(children.second().mutate(mutationRate));
