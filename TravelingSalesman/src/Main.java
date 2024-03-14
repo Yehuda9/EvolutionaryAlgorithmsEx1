@@ -14,12 +14,21 @@ public class Main {
       int generationSize,
       int chromosomeSize,
       double mutationRate,
+      Config.SelectionType selectionType,
+      Config.CrossoverType crossoverType,
       double crossoverRate,
       int elitism,
       int maxGenerations) {
     try {
       runEvolution(
-          generationSize, chromosomeSize, mutationRate, crossoverRate, elitism, maxGenerations);
+          generationSize,
+          chromosomeSize,
+          mutationRate,
+          selectionType,
+          crossoverType,
+          crossoverRate,
+          elitism,
+          maxGenerations);
     } catch (IOException e) {
       Logger.getInstance().log("Failed to run evolution: " + e.getMessage());
     }
@@ -29,6 +38,8 @@ public class Main {
       int generationSize,
       int chromosomeSize,
       double mutationRate,
+      Config.SelectionType selectionType,
+      Config.CrossoverType crossoverType,
       double crossoverRate,
       int elitism,
       int maxGenerations)
@@ -62,8 +73,8 @@ public class Main {
     Generation generation = new Generation(generationSize, chromosomeSize);
     for (int i = 0; i < maxGenerations; i++) {
       generation =
-          generation.getNextGenerationWithTournamentSelectionAndTwoPointsCrossover(
-              generationSize, mutationRate, crossoverRate, elitism);
+          generation.getNextGeneration(
+              generationSize, mutationRate, selectionType, crossoverType, crossoverRate, elitism);
 
       dataLogger.log(List.of(String.valueOf(i), String.valueOf(generation.getFittest().fitness())));
     }
@@ -78,6 +89,8 @@ public class Main {
                 String.valueOf(generationSize),
                 String.valueOf(chromosomeSize),
                 String.valueOf(mutationRate),
+                selectionType.name(),
+                crossoverType.name(),
                 String.valueOf(crossoverRate),
                 String.valueOf(elitism),
                 String.valueOf(maxGenerations),
@@ -95,6 +108,8 @@ public class Main {
                 "Generation Size",
                 "Chromosome Size",
                 "Mutation Rate",
+                "Selection Type",
+                "Crossover Type",
                 "Crossover Rate",
                 "Elitism",
                 "Max Generations",
@@ -104,138 +119,84 @@ public class Main {
         new Thread(
             () ->
                 tryRunEvolution(
-                    /* generationSize= */ 2,
-                    /* chromosomeSize= */ 48,
-                    /* mutationRate= */ 0.01,
-                    /* crossoverRate= */ 0.5,
-                    /* elitism= */ 2,
-                    /* maxGenerations= */ 1));
-
-    Thread thread2 =
-        new Thread(
-            () ->
-                tryRunEvolution(
-                    /* generationSize= */ 300,
-                    /* chromosomeSize= */ 48,
-                    /* mutationRate= */ 0.01,
-                    /* crossoverRate= */ 0.5,
-                    /* elitism= */ 2,
-                    /* maxGenerations= */ 100));
-
-    Thread thread3 =
-        new Thread(
-            () ->
-                tryRunEvolution(
-                    /* generationSize= */ 600,
-                    /* chromosomeSize= */ 48,
-                    /* mutationRate= */ 0.01,
-                    /* crossoverRate= */ 0.5,
-                    /* elitism= */ 2,
-                    /* maxGenerations= */ 100));
-
-    Thread thread4 =
-        new Thread(
-            () ->
-                tryRunEvolution(
-                    /* generationSize= */ 300,
-                    /* chromosomeSize= */ 48,
-                    /* mutationRate= */ 0.01,
-                    /* crossoverRate= */ 0.5,
-                    /* elitism= */ 2,
-                    /* maxGenerations= */ 300));
-
-    Thread thread5 =
-        new Thread(
-            () ->
-                tryRunEvolution(
-                    /* generationSize= */ 300,
-                    /* chromosomeSize= */ 48,
-                    /* mutationRate= */ 0.01,
-                    /* crossoverRate= */ 0.5,
-                    /* elitism= */ 2,
-                    /* maxGenerations= */ 1000));
-
-    Thread thread6 =
-        new Thread(
-            () ->
-                tryRunEvolution(
-                    /* generationSize= */ 300,
-                    /* chromosomeSize= */ 48,
-                    /* mutationRate= */ 0.01,
-                    /* crossoverRate= */ 0.9,
-                    /* elitism= */ 2,
-                    /* maxGenerations= */ 1000));
-
-    Thread thread7 =
-        new Thread(
-            () ->
-                tryRunEvolution(
-                    /* generationSize= */ 300,
-                    /* chromosomeSize= */ 48,
-                    /* mutationRate= */ 0.05,
-                    /* crossoverRate= */ 0.9,
-                    /* elitism= */ 2,
-                    /* maxGenerations= */ 1000));
-
-    Thread thread8 =
-        new Thread(
-            () ->
-                tryRunEvolution(
-                    /* generationSize= */ 300,
-                    /* chromosomeSize= */ 48,
-                    /* mutationRate= */ 0.1,
-                    /* crossoverRate= */ 0.9,
-                    /* elitism= */ 2,
-                    /* maxGenerations= */ 1000));
-
-    Thread thread9 =
-        new Thread(
-            () ->
-                tryRunEvolution(
                     /* generationSize= */ 1000,
                     /* chromosomeSize= */ 48,
-                    /* mutationRate= */ 0.05,
+                    /* mutationRate= */ 0.2,
+                    Config.SelectionType.Tournament,
+                    Config.CrossoverType.TwoPoints,
                     /* crossoverRate= */ 1,
                     /* elitism= */ 2,
-                    /* maxGenerations= */ 1000));
+                    /* maxGenerations= */ 500));
 
-    Thread thread10 =
+    Thread thread2 =
         new Thread(
             () ->
                 tryRunEvolution(
                     /* generationSize= */ 1000,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.2,
+                    Config.SelectionType.Tournament,
+                    Config.CrossoverType.SinglePoint,
                     /* crossoverRate= */ 1,
                     /* elitism= */ 2,
                     /* maxGenerations= */ 500));
 
-    Thread thread11 =
+    Thread thread3 =
         new Thread(
             () ->
                 tryRunEvolution(
                     /* generationSize= */ 1000,
                     /* chromosomeSize= */ 48,
-                    /* mutationRate= */ 0.1,
+                    /* mutationRate= */ 0.2,
+                    Config.SelectionType.Rank,
+                    Config.CrossoverType.TwoPoints,
                     /* crossoverRate= */ 1,
-                    /* elitism= */ 10,
-                    /* maxGenerations= */ 1000));
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 500));
 
-    Thread thread12 =
+    Thread thread4 =
         new Thread(
             () ->
                 tryRunEvolution(
                     /* generationSize= */ 1000,
                     /* chromosomeSize= */ 48,
-                    /* mutationRate= */ 0.1,
-                    /* crossoverRate= */ 0.9,
-                    /* elitism= */ 10,
-                    /* maxGenerations= */ 1000));
+                    /* mutationRate= */ 0.2,
+                    Config.SelectionType.Rank,
+                    Config.CrossoverType.SinglePoint,
+                    /* crossoverRate= */ 1,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 500));
+
+    Thread thread5 =
+        new Thread(
+            () ->
+                tryRunEvolution(
+                    /* generationSize= */ 1000,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.2,
+                    Config.SelectionType.RouletteWheel,
+                    Config.CrossoverType.TwoPoints,
+                    /* crossoverRate= */ 1,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 500));
+
+    Thread thread6 =
+        new Thread(
+            () ->
+                tryRunEvolution(
+                    /* generationSize= */ 1000,
+                    /* chromosomeSize= */ 48,
+                    /* mutationRate= */ 0.2,
+                    Config.SelectionType.RouletteWheel,
+                    Config.CrossoverType.SinglePoint,
+                    /* crossoverRate= */ 1,
+                    /* elitism= */ 2,
+                    /* maxGenerations= */ 500));
 
     ExecutorService executor =
         Executors.newFixedThreadPool(
             (int) (Runtime.getRuntime().availableProcessors() * (3 / 4.0)));
-    List<Thread> threads = List.of(thread10);
+    List<Thread> threads = List.of(thread1 /*, thread2, thread3, thread4, thread5, thread6*/);
 
     for (Thread thread : threads) {
       executor.execute(thread);
@@ -246,5 +207,3 @@ public class Main {
     executor.shutdown();
   }
 }
-
-//  90394.47398522719

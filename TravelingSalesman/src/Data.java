@@ -39,6 +39,10 @@ public class Data {
     return points.get(index);
   }
 
+  public int getIndexOf(Point point) {
+    return points.indexOf(point);
+  }
+
   public int size() {
     return points.size();
   }

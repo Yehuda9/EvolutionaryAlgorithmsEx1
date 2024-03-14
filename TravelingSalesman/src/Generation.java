@@ -77,6 +77,17 @@ public class Generation {
     return tournament.stream().min(Comparator.comparing(Chromosome::fitness)).orElseThrow();
   }
 
+  private static Pair<Chromosome> crossover(
+      Chromosome parent1,
+      Chromosome parent2,
+      Config.CrossoverType crossoverType,
+      double crossoverRate) {
+    return switch (crossoverType) {
+      case SinglePoint -> singlePointCrossover(parent1, parent2, crossoverRate);
+      case TwoPoints -> twoPointsCrossover(parent1, parent2, crossoverRate);
+    };
+  }
+
   private static Chromosome select(Map<Chromosome, Double> chromosomeByProbability) {
     double probabilitiesSum = chromosomeByProbability.values().stream().reduce(0.0, Double::sum);
     double random = Main.random.nextDouble() * probabilitiesSum;
@@ -149,28 +160,21 @@ public class Generation {
         new Chromosome(child1.toArray(Point[]::new)), new Chromosome(child2.toArray(Point[]::new)));
   }
 
-  public Generation getNextGenerationWithRouletteWheelSelectionAndSinglePointCrossover(
-      int generationSize, double mutationRate, double crossoverRate, int elitism) {
-    Generation nextGeneration = new Generation();
-
-    this.getFittest(elitism).forEach(nextGeneration::add);
-    while (nextGeneration.size() < generationSize) {
-      if (Main.random.nextDouble() > crossoverRate) {
-        continue;
-      }
-      Chromosome parent1 = rouletteWheelSelection();
-      Chromosome parent2 = rouletteWheelSelection();
-      Pair<Chromosome> children = singlePointCrossover(parent1, parent2, crossoverRate);
-
-      nextGeneration.add(children.first().mutate(mutationRate));
-      nextGeneration.add(children.second().mutate(mutationRate));
-    }
-
-    return nextGeneration;
+  private Chromosome select(Config.SelectionType selectionType) {
+    return switch (selectionType) {
+      case RouletteWheel -> rouletteWheelSelection();
+      case Rank -> rankSelection();
+      case Tournament -> tournamentSelection();
+    };
   }
 
-  public Generation getNextGenerationWithRankSelectionAndSinglePointCrossover(
-      int generationSize, double mutationRate, double crossoverRate, int elitism) {
+  public Generation getNextGeneration(
+      int generationSize,
+      double mutationRate,
+      Config.SelectionType selectionType,
+      Config.CrossoverType crossoverType,
+      double crossoverRate,
+      int elitism) {
     Generation nextGeneration = new Generation();
 
     this.getFittest(elitism).forEach(nextGeneration::add);
@@ -178,29 +182,9 @@ public class Generation {
       if (Main.random.nextDouble() > crossoverRate) {
         continue;
       }
-      Chromosome parent1 = rankSelection();
-      Chromosome parent2 = rankSelection();
-      Pair<Chromosome> children = singlePointCrossover(parent1, parent2, crossoverRate);
-
-      nextGeneration.add(children.first().mutate(mutationRate));
-      nextGeneration.add(children.second().mutate(mutationRate));
-    }
-
-    return nextGeneration;
-  }
-
-  public Generation getNextGenerationWithTournamentSelectionAndTwoPointsCrossover(
-      int generationSize, double mutationRate, double crossoverRate, int elitism) {
-    Generation nextGeneration = new Generation();
-
-    this.getFittest(elitism).forEach(nextGeneration::add);
-    while (nextGeneration.size() < generationSize) {
-      if (Main.random.nextDouble() > crossoverRate) {
-        continue;
-      }
-      Chromosome parent1 = tournamentSelection();
-      Chromosome parent2 = tournamentSelection();
-      Pair<Chromosome> children = twoPointsCrossover(parent1, parent2, crossoverRate);
+      Chromosome parent1 = select(selectionType);
+      Chromosome parent2 = select(selectionType);
+      Pair<Chromosome> children = crossover(parent1, parent2, crossoverType, crossoverRate);
 
       nextGeneration.add(children.first().mutate(mutationRate));
       nextGeneration.add(children.second().mutate(mutationRate));
