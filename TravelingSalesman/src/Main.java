@@ -10,58 +10,61 @@ public class Main {
   private static final long SEED = 3447761810369037120L;
   public static final Random random = new Random(SEED);
 
-  public static void runEvolution(
+  public static void tryRunEvolution(
       int generationSize,
       int chromosomeSize,
       double mutationRate,
       double crossoverRate,
       int elitism,
       int maxGenerations) {
-    String uuid = UUID.randomUUID().toString();
-    DataLogger dataLogger = null;
     try {
-      dataLogger =
-          new DataLogger(
-              String.format("../logs/%s.csv", uuid),
-              List.of(
-                  "Time",
-                  "Generation",
-                  "Best Fitness",
-                  "Generation Size",
-                  "Chromosome Size",
-                  "Mutation Rate",
-                  "Crossover Rate",
-                  "Elitism",
-                  "Max Generations"));
+      runEvolution(
+          generationSize, chromosomeSize, mutationRate, crossoverRate, elitism, maxGenerations);
     } catch (IOException e) {
-      System.out.println("Failed to create data logger " + e.getMessage());
+      Logger.getInstance().log("Failed to run evolution: " + e.getMessage());
     }
-    if (dataLogger != null) {
-      dataLogger.log(
-          List.of(
-              "n/a",
-              "n/a",
-              String.valueOf(generationSize),
-              String.valueOf(chromosomeSize),
-              String.valueOf(mutationRate),
-              String.valueOf(crossoverRate),
-              String.valueOf(elitism),
-              String.valueOf(maxGenerations)));
-    }
+  }
+
+  public static void runEvolution(
+      int generationSize,
+      int chromosomeSize,
+      double mutationRate,
+      double crossoverRate,
+      int elitism,
+      int maxGenerations)
+      throws IOException {
+    String uuid = UUID.randomUUID().toString();
+
+    DataLogger dataLogger =
+        new DataLogger(
+            String.format("../logs/%s.csv", uuid),
+            List.of(
+                "Time",
+                "Generation",
+                "Best Fitness",
+                "Generation Size",
+                "Chromosome Size",
+                "Mutation Rate",
+                "Crossover Rate",
+                "Elitism",
+                "Max Generations"));
+    dataLogger.log(
+        List.of(
+            "n/a",
+            "n/a",
+            String.valueOf(generationSize),
+            String.valueOf(chromosomeSize),
+            String.valueOf(mutationRate),
+            String.valueOf(crossoverRate),
+            String.valueOf(elitism),
+            String.valueOf(maxGenerations)));
 
     Generation generation = new Generation(generationSize, chromosomeSize);
     for (int i = 0; i < maxGenerations; i++) {
-      double prevFittest = generation.getFittest().fitness();
       generation =
           generation.getNextGeneration3(generationSize, mutationRate, crossoverRate, elitism);
-      if (dataLogger != null) {
-        dataLogger.log(
-            List.of(String.valueOf(i), String.valueOf(generation.getFittest().fitness())));
-      }
 
-      if (generation.getFittest().fitness() > prevFittest) {
-        System.out.println("***Previous fittest is better than current fittest***");
-      }
+      dataLogger.log(List.of(String.valueOf(i), String.valueOf(generation.getFittest().fitness())));
     }
 
     Chromosome best = generation.getFittest();
@@ -99,7 +102,7 @@ public class Main {
     Thread thread1 =
         new Thread(
             () ->
-                runEvolution(
+                tryRunEvolution(
                     /* generationSize= */ 2,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.01,
@@ -110,7 +113,7 @@ public class Main {
     Thread thread2 =
         new Thread(
             () ->
-                runEvolution(
+                tryRunEvolution(
                     /* generationSize= */ 300,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.01,
@@ -121,7 +124,7 @@ public class Main {
     Thread thread3 =
         new Thread(
             () ->
-                runEvolution(
+                tryRunEvolution(
                     /* generationSize= */ 600,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.01,
@@ -132,7 +135,7 @@ public class Main {
     Thread thread4 =
         new Thread(
             () ->
-                runEvolution(
+                tryRunEvolution(
                     /* generationSize= */ 300,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.01,
@@ -143,7 +146,7 @@ public class Main {
     Thread thread5 =
         new Thread(
             () ->
-                runEvolution(
+                tryRunEvolution(
                     /* generationSize= */ 300,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.01,
@@ -154,7 +157,7 @@ public class Main {
     Thread thread6 =
         new Thread(
             () ->
-                runEvolution(
+                tryRunEvolution(
                     /* generationSize= */ 300,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.01,
@@ -165,7 +168,7 @@ public class Main {
     Thread thread7 =
         new Thread(
             () ->
-                runEvolution(
+                tryRunEvolution(
                     /* generationSize= */ 300,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.05,
@@ -176,7 +179,7 @@ public class Main {
     Thread thread8 =
         new Thread(
             () ->
-                runEvolution(
+                tryRunEvolution(
                     /* generationSize= */ 300,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.1,
@@ -187,7 +190,7 @@ public class Main {
     Thread thread9 =
         new Thread(
             () ->
-                runEvolution(
+                tryRunEvolution(
                     /* generationSize= */ 1000,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.05,
@@ -198,7 +201,7 @@ public class Main {
     Thread thread10 =
         new Thread(
             () ->
-                runEvolution(
+                tryRunEvolution(
                     /* generationSize= */ 1000,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.2,
@@ -209,7 +212,7 @@ public class Main {
     Thread thread11 =
         new Thread(
             () ->
-                runEvolution(
+                tryRunEvolution(
                     /* generationSize= */ 1000,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.1,
@@ -220,7 +223,7 @@ public class Main {
     Thread thread12 =
         new Thread(
             () ->
-                runEvolution(
+                tryRunEvolution(
                     /* generationSize= */ 1000,
                     /* chromosomeSize= */ 48,
                     /* mutationRate= */ 0.1,
