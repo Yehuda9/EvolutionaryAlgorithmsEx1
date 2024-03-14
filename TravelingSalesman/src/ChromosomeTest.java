@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class ChromosomeTest {
 
   private static final int chromosomeSize = 48;
@@ -9,7 +11,7 @@ public class ChromosomeTest {
 
   void fitness_isPositive() {
     setup();
-    chromosome = new Chromosome(chromosomeSize);
+    chromosome = new Chromosome(chromosomeSize, new Random());
 
     TestsUtils.assertCondition(chromosome.fitness() > 0);
   }
@@ -17,7 +19,7 @@ public class ChromosomeTest {
   void fitness_calculatedRight() {
     setup();
 
-    chromosome = new Chromosome(new Point[] {new Point(0, 0), new Point(3, 4)});
+    chromosome = new Chromosome(new Point[] {new Point(0, 0), new Point(3, 4)}, new Random());
 
     TestsUtils.assertCondition(chromosome.fitness() == 10);
   }

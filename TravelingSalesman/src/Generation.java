@@ -4,17 +4,24 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Generation {
+  private final Random random;
   private final List<Chromosome> chromosomes;
 
-  public Generation(int generationSize, int chromosomeSize) {
-    chromosomes =
-        Stream.generate(() -> new Chromosome(chromosomeSize))
+  public Generation(int generationSize, int chromosomeSize, Random random) {
+    this(
+        Stream.generate(() -> new Chromosome(chromosomeSize, random))
             .limit(generationSize)
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()),
+        random);
   }
 
-  public Generation() {
-    this.chromosomes = new ArrayList<>();
+  public Generation(Random random) {
+    this(new ArrayList<>(), random);
+  }
+
+  public Generation(List<Chromosome> chromosomes, Random random) {
+    this.chromosomes = chromosomes;
+    this.random = random;
   }
 
   public Chromosome getFittest() {
@@ -73,16 +80,16 @@ public class Generation {
     int tournamentSize = 4;
     List<Chromosome> tournament = new ArrayList<>();
     IntStream.range(0, tournamentSize)
-        .forEach(i -> tournament.add(chromosomes.get(Main.random.nextInt(chromosomes.size()))));
+        .forEach(i -> tournament.add(chromosomes.get(random.nextInt(chromosomes.size()))));
     return tournament.stream().min(Comparator.comparing(Chromosome::fitness)).orElseThrow();
   }
 
-  private static Pair<Chromosome> crossover(
+  private Pair<Chromosome> crossover(
       Chromosome parent1,
       Chromosome parent2,
       Config.CrossoverType crossoverType,
       double crossoverRate) {
-    if (Main.random.nextDouble() > crossoverRate) {
+    if (random.nextDouble() > crossoverRate) {
       return new Pair<>(parent1, parent2);
     }
     return switch (crossoverType) {
@@ -91,9 +98,9 @@ public class Generation {
     };
   }
 
-  private static Chromosome select(Map<Chromosome, Double> chromosomeByProbability) {
+  private Chromosome select(Map<Chromosome, Double> chromosomeByProbability) {
     double probabilitiesSum = chromosomeByProbability.values().stream().reduce(0.0, Double::sum);
-    double random = Main.random.nextDouble() * probabilitiesSum;
+    double random = this.random.nextDouble() * probabilitiesSum;
     double sum = 0;
     for (Map.Entry<Chromosome, Double> entry : chromosomeByProbability.entrySet()) {
       sum += entry.getValue();
@@ -108,8 +115,8 @@ public class Generation {
         .getKey();
   }
 
-  private static Pair<Chromosome> singlePointCrossover(Chromosome parent1, Chromosome parent2) {
-    int crossoverPoint = Main.random.nextInt(Math.max(parent1.size(), parent2.size()));
+  private Pair<Chromosome> singlePointCrossover(Chromosome parent1, Chromosome parent2) {
+    int crossoverPoint = random.nextInt(Math.max(parent1.size(), parent2.size()));
     List<Point> genes1 =
         new ArrayList<>(Arrays.stream(parent1.getGenes(), 0, crossoverPoint).toList());
     genes1.addAll(Arrays.stream(parent2.getGenes()).filter(i -> !genes1.contains(i)).toList());
@@ -119,15 +126,16 @@ public class Generation {
     genes2.addAll(Arrays.stream(parent1.getGenes()).filter(i -> !genes2.contains(i)).toList());
 
     return new Pair<>(
-        new Chromosome(genes1.toArray(Point[]::new)), new Chromosome(genes2.toArray(Point[]::new)));
+        new Chromosome(genes1.toArray(Point[]::new), this.random),
+        new Chromosome(genes2.toArray(Point[]::new), this.random));
   }
 
-  private static Pair<Chromosome> twoPointsCrossover(Chromosome parent1, Chromosome parent2) {
-    int crossoverPoint1 = Main.random.nextInt(parent1.size());
-    int crossoverPoint2 = Main.random.nextInt(parent2.size());
+  private Pair<Chromosome> twoPointsCrossover(Chromosome parent1, Chromosome parent2) {
+    int crossoverPoint1 = random.nextInt(parent1.size());
+    int crossoverPoint2 = random.nextInt(parent2.size());
     while (crossoverPoint1 == crossoverPoint2) {
-      crossoverPoint1 = Main.random.nextInt(parent1.size());
-      crossoverPoint2 = Main.random.nextInt(parent2.size());
+      crossoverPoint1 = random.nextInt(parent1.size());
+      crossoverPoint2 = random.nextInt(parent2.size());
     }
 
     int start = Math.min(crossoverPoint1, crossoverPoint2);
@@ -152,7 +160,8 @@ public class Generation {
     child2.addAll(child2Remain);
 
     return new Pair<>(
-        new Chromosome(child1.toArray(Point[]::new)), new Chromosome(child2.toArray(Point[]::new)));
+        new Chromosome(child1.toArray(Point[]::new), this.random),
+        new Chromosome(child2.toArray(Point[]::new), this.random));
   }
 
   private Chromosome select(Config.SelectionType selectionType) {
@@ -170,7 +179,7 @@ public class Generation {
       Config.CrossoverType crossoverType,
       double crossoverRate,
       int elitism) {
-    Generation nextGeneration = new Generation();
+    Generation nextGeneration = new Generation(this.random);
 
     this.getFittest(elitism).forEach(nextGeneration::add);
     while (nextGeneration.size() < generationSize) {
