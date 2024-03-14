@@ -145,31 +145,27 @@ public class Generation {
         new Chromosome(child1.toArray(Point[]::new)), new Chromosome(child2.toArray(Point[]::new)));
   }
 
-  public Generation getNextGeneration1(int generationSize, double mutationRate, int elitism) {
+  public Generation getNextGenerationWithRouletteWheelSelectionAndSinglePointCrossover(
+      int generationSize, double mutationRate, double crossoverRate, int elitism) {
     Generation nextGeneration = new Generation();
 
     this.getFittest(elitism).forEach(nextGeneration::add);
     while (nextGeneration.size() < generationSize) {
+      if (Main.random.nextDouble() > crossoverRate) {
+        continue;
+      }
       Chromosome parent1 = rouletteWheelSelection();
       Chromosome parent2 = rouletteWheelSelection();
       Pair<Chromosome> children = singlePointCrossover(parent1, parent2);
-      children.first().mutate(mutationRate);
-      children.second().mutate(mutationRate);
-      nextGeneration.add(children.first());
-      nextGeneration.add(children.second());
 
-      /*if (children.first().fitness() <= Math.min(parent1.fitness(), parent2.fitness())) {
-        nextGeneration.add(children.first());
-      }
-      if (children.second().fitness() <= Math.min(parent1.fitness(), parent2.fitness())) {
-        nextGeneration.add(children.second());
-      }*/
+      nextGeneration.add(children.first().mutate(mutationRate));
+      nextGeneration.add(children.second().mutate(mutationRate));
     }
 
     return nextGeneration;
   }
 
-  public Generation getNextGeneration2(
+  public Generation getNextGenerationWithRankSelectionAndSinglePointCrossover(
       int generationSize, double mutationRate, double crossoverRate, int elitism) {
     Generation nextGeneration = new Generation();
 
@@ -189,7 +185,7 @@ public class Generation {
     return nextGeneration;
   }
 
-  public Generation getNextGeneration3(
+  public Generation getNextGenerationWithTournamentSelectionAndTwoPointsCrossover(
       int generationSize, double mutationRate, double crossoverRate, int elitism) {
     Generation nextGeneration = new Generation();
 

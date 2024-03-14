@@ -62,7 +62,8 @@ public class Main {
     Generation generation = new Generation(generationSize, chromosomeSize);
     for (int i = 0; i < maxGenerations; i++) {
       generation =
-          generation.getNextGeneration3(generationSize, mutationRate, crossoverRate, elitism);
+          generation.getNextGenerationWithTournamentSelectionAndTwoPointsCrossover(
+              generationSize, mutationRate, crossoverRate, elitism);
 
       dataLogger.log(List.of(String.valueOf(i), String.valueOf(generation.getFittest().fitness())));
     }
