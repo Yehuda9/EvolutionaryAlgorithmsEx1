@@ -18,7 +18,7 @@ public class Main {
                         Config.CrossoverType.SinglePoint,
                         /* crossoverRate= */ 1,
                         /* elitism= */ 2,
-                        /* maxGenerations= */ 100));
+                        /* maxGenerations= */ 10));
 
     Evolution.runParallel(thread1);
   }

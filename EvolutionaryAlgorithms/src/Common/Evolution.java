@@ -3,6 +3,7 @@ package Common;
 import EightQueenPuzzle.*;
 import TravelingSalesman.*;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -51,23 +52,6 @@ public class Evolution {
       thread.join();
     }
     executor.shutdown();
-  }
-
-  private static String chromosomeToString(Chromosome chromosome, Config.ProblemType problemType) {
-    switch (problemType) {
-      case TravelingSalesman -> {
-        Route route = (Route) chromosome;
-        return route.toString();
-      }
-      case EightQueensPuzzle -> {
-        Puzzle puzzle = (Puzzle) chromosome;
-        System.out.println("\n" + puzzle);
-        return "";
-      }
-      default -> {
-        return "";
-      }
-    }
   }
 
   private void runEvolution(
@@ -140,5 +124,21 @@ public class Evolution {
       case TravelingSalesman -> new Routes(generationSize, chromosomeSize, random);
       case EightQueensPuzzle -> new Puzzles(generationSize, chromosomeSize, random);
     };
+  }
+
+  private static String chromosomeToString(Chromosome chromosome, Config.ProblemType problemType) {
+    switch (problemType) {
+      case TravelingSalesman -> {
+        Route route = (Route) chromosome;
+        return route.toString();
+      }
+      case EightQueensPuzzle -> {
+        Puzzle puzzle = (Puzzle) chromosome;
+        return Arrays.toString(puzzle.getGenes());
+      }
+      default -> {
+        return "";
+      }
+    }
   }
 }
