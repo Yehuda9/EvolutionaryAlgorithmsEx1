@@ -1,14 +1,17 @@
 package Common;
 
-import TravelingSalesman.Routes;
+import EightQueenPuzzle.*;
+import TravelingSalesman.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Evolution {
   private static final long SEED = 3447761810369037120L;
-  public final Random random = new Random(SEED);
+  public final Random random = new Random(/*SEED*/ );
 
   public void tryRunEvolution(
       Config.ProblemType problemType,
@@ -36,6 +39,37 @@ public class Evolution {
     }
   }
 
+  public static void runParallel(Thread... threads) throws InterruptedException {
+    ExecutorService executor =
+        Executors.newFixedThreadPool(
+            (int) (Runtime.getRuntime().availableProcessors() * (3 / 4.0)));
+
+    for (Thread thread : threads) {
+      executor.execute(thread);
+    }
+    for (Thread thread : threads) {
+      thread.join();
+    }
+    executor.shutdown();
+  }
+
+  private static String chromosomeToString(Chromosome chromosome, Config.ProblemType problemType) {
+    switch (problemType) {
+      case TravelingSalesman -> {
+        Route route = (Route) chromosome;
+        return route.toString();
+      }
+      case EightQueensPuzzle -> {
+        Puzzle puzzle = (Puzzle) chromosome;
+        System.out.println("\n" + puzzle);
+        return "";
+      }
+      default -> {
+        return "";
+      }
+    }
+  }
+
   private void runEvolution(
       Config.ProblemType problemType,
       int generationSize,
@@ -48,34 +82,9 @@ public class Evolution {
       int maxGenerations)
       throws IOException {
     String uuid = UUID.randomUUID().toString();
-
     System.out.printf("../logs/%s.csv,", uuid);
 
-    DataLogger dataLogger =
-        new DataLogger(
-            String.format("../logs/%s.csv", uuid),
-            List.of(
-                "Time",
-                "Generation",
-                "Best Fitness",
-                "Average Fitness",
-                "Generation Size",
-                "Chromosome Size",
-                "Mutation Rate",
-                "Crossover Rate",
-                "Elitism",
-                "Max Generations"));
-    dataLogger.log(
-        List.of(
-            "n/a",
-            "n/a",
-            "n/a",
-            String.valueOf(generationSize),
-            String.valueOf(chromosomeSize),
-            String.valueOf(mutationRate),
-            String.valueOf(crossoverRate),
-            String.valueOf(elitism),
-            String.valueOf(maxGenerations)));
+    DataLogger dataLogger = new DataLogger(String.format("../logs/%s.csv", uuid));
 
     Generation generation = newGeneration(problemType, generationSize, chromosomeSize, random);
     for (int i = 0; i < maxGenerations; i++) {
@@ -95,7 +104,24 @@ public class Evolution {
         .log(
             String.join(
                 ", ",
+                "uuid",
+                "Problem Type",
+                "Best Fitness",
+                "Generation Size",
+                "Chromosome Size",
+                "Mutation Rate",
+                "Selection Type",
+                "Crossover Type",
+                "Crossover Rate",
+                "Elitism",
+                "Max Generations",
+                "Best Route"));
+    Logger.getInstance()
+        .log(
+            String.join(
+                ", ",
                 uuid,
+                problemType.name(),
                 String.valueOf(best.fitness()),
                 String.valueOf(generationSize),
                 String.valueOf(chromosomeSize),
@@ -105,14 +131,14 @@ public class Evolution {
                 String.valueOf(crossoverRate),
                 String.valueOf(elitism),
                 String.valueOf(maxGenerations),
-                String.valueOf(best)));
+                chromosomeToString(best, problemType)));
   }
 
   private Generation newGeneration(
       Config.ProblemType problemType, int generationSize, int chromosomeSize, Random random) {
     return switch (problemType) {
       case TravelingSalesman -> new Routes(generationSize, chromosomeSize, random);
-      case EightQueensPuzzle -> null;
+      case EightQueensPuzzle -> new Puzzles(generationSize, chromosomeSize, random);
     };
   }
 }

@@ -58,6 +58,6 @@ public class Route extends Chromosome {
 
   @Override
   public String toString() {
-    return Arrays.toString(getGenes());
+    return Arrays.toString(Arrays.stream(getGenes()).mapToInt(data::getIndexOf).toArray());
   }
 }

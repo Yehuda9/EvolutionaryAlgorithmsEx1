@@ -2,6 +2,7 @@ package Common;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.time.Instant;
 import java.time.ZoneId;
 
@@ -9,14 +10,16 @@ public class Logger {
 
   private static final String LOG_FILE = "../logs/log.csv";
   private static Logger instance;
-  private FileWriter writer;
+  private final OutputStreamWriter writer;
 
   private Logger() {
+    OutputStreamWriter tempWriter;
     try {
-      writer = new FileWriter(LOG_FILE, /* append= */ true);
+      tempWriter = new FileWriter(LOG_FILE, /* append= */ true);
     } catch (IOException e) {
-      System.out.println("Failed to create log file " + e.getMessage());
+      tempWriter = new OutputStreamWriter(System.out);
     }
+    writer = tempWriter;
   }
 
   public static Logger getInstance() {

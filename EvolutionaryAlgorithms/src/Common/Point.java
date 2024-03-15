@@ -1,6 +1,5 @@
 package Common;
 
-import TravelingSalesman.Data;
 import java.util.Objects;
 
 public class Point {
@@ -10,6 +9,9 @@ public class Point {
   public Point(int x, int y) {
     this.x = x;
     this.y = y;
+    if (y != 0) {
+      throw new IllegalArgumentException("y must be 0");
+    }
   }
 
   public int getX() {
@@ -22,11 +24,6 @@ public class Point {
 
   public double distanceTo(Point other) {
     return Math.sqrt(Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2));
-  }
-
-  @Override
-  public String toString() {
-    return String.valueOf(Data.getInstance().getIndexOf(this));
   }
 
   @Override
