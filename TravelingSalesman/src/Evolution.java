@@ -43,6 +43,8 @@ public class Evolution {
       throws IOException {
     String uuid = UUID.randomUUID().toString();
 
+    System.out.printf("../../TravelingSalesman/logs/%s.csv,", uuid);
+
     DataLogger dataLogger =
         new DataLogger(
             String.format("../logs/%s.csv", uuid),
@@ -50,6 +52,7 @@ public class Evolution {
                 "Time",
                 "Generation",
                 "Best Fitness",
+                "Average Fitness",
                 "Generation Size",
                 "Chromosome Size",
                 "Mutation Rate",
@@ -58,6 +61,7 @@ public class Evolution {
                 "Max Generations"));
     dataLogger.log(
         List.of(
+            "n/a",
             "n/a",
             "n/a",
             String.valueOf(generationSize),
@@ -73,7 +77,11 @@ public class Evolution {
           generation.getNextGeneration(
               generationSize, mutationRate, selectionType, crossoverType, crossoverRate, elitism);
 
-      dataLogger.log(List.of(String.valueOf(i), String.valueOf(generation.getFittest().fitness())));
+      dataLogger.log(
+          List.of(
+              String.valueOf(i),
+              String.valueOf(generation.getFittest().fitness()),
+              String.valueOf(generation.getAverage())));
     }
 
     Chromosome best = generation.getFittest();

@@ -8,4 +8,4 @@ javac src/*java -d bin
 
 cd bin || exit
 
-java Main ../data/tsp.txt
+py ../../plot/plot.py "$(java Main ../data/tsp.txt)"

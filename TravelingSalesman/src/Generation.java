@@ -28,6 +28,10 @@ public class Generation {
     return chromosomes.stream().min(Comparator.comparing(Chromosome::fitness)).orElseThrow();
   }
 
+  public double getAverage() {
+    return chromosomes.stream().mapToDouble(Chromosome::fitness).average().orElseThrow();
+  }
+
   public List<Chromosome> getFittest(int limit) {
     return chromosomes.stream()
         .sorted(Comparator.comparing(Chromosome::fitness))

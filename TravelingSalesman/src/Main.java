@@ -27,84 +27,84 @@ public class Main {
             () ->
                 new Evolution()
                     .tryRunEvolution(
-                        /* generationSize= */ 1000,
+                        /* generationSize= */ 3500,
                         /* chromosomeSize= */ 48,
-                        /* mutationRate= */ 0.2,
+                        /* mutationRate= */ 0.12,
                         Config.SelectionType.Tournament,
                         Config.CrossoverType.TwoPoints,
                         /* crossoverRate= */ 1,
                         /* elitism= */ 2,
-                        /* maxGenerations= */ 500));
+                        /* maxGenerations= */ 1000));
 
     Thread thread2 =
         new Thread(
             () ->
                 new Evolution()
                     .tryRunEvolution(
-                        /* generationSize= */ 1000,
+                        /* generationSize= */ 3500,
                         /* chromosomeSize= */ 48,
-                        /* mutationRate= */ 0.2,
+                        /* mutationRate= */ 0.12,
                         Config.SelectionType.Tournament,
                         Config.CrossoverType.SinglePoint,
                         /* crossoverRate= */ 1,
                         /* elitism= */ 2,
-                        /* maxGenerations= */ 500));
+                        /* maxGenerations= */ 1000));
 
     Thread thread3 =
         new Thread(
             () ->
                 new Evolution()
                     .tryRunEvolution(
-                        /* generationSize= */ 1000,
+                        /* generationSize= */ 3500,
                         /* chromosomeSize= */ 48,
-                        /* mutationRate= */ 0.2,
+                        /* mutationRate= */ 0.12,
                         Config.SelectionType.Rank,
                         Config.CrossoverType.TwoPoints,
                         /* crossoverRate= */ 1,
                         /* elitism= */ 2,
-                        /* maxGenerations= */ 500));
+                        /* maxGenerations= */ 1000));
 
     Thread thread4 =
         new Thread(
             () ->
                 new Evolution()
                     .tryRunEvolution(
-                        /* generationSize= */ 1000,
+                        /* generationSize= */ 3500,
                         /* chromosomeSize= */ 48,
-                        /* mutationRate= */ 0.2,
+                        /* mutationRate= */ 0.12,
                         Config.SelectionType.Rank,
                         Config.CrossoverType.SinglePoint,
                         /* crossoverRate= */ 1,
                         /* elitism= */ 2,
-                        /* maxGenerations= */ 500));
+                        /* maxGenerations= */ 1000));
 
     Thread thread5 =
         new Thread(
             () ->
                 new Evolution()
                     .tryRunEvolution(
-                        /* generationSize= */ 1000,
+                        /* generationSize= */ 3500,
                         /* chromosomeSize= */ 48,
-                        /* mutationRate= */ 0.2,
+                        /* mutationRate= */ 0.12,
                         Config.SelectionType.RouletteWheel,
                         Config.CrossoverType.TwoPoints,
                         /* crossoverRate= */ 1,
                         /* elitism= */ 2,
-                        /* maxGenerations= */ 500));
+                        /* maxGenerations= */ 1000));
 
     Thread thread6 =
         new Thread(
             () ->
                 new Evolution()
                     .tryRunEvolution(
-                        /* generationSize= */ 1000,
+                        /* generationSize= */ 3500,
                         /* chromosomeSize= */ 48,
-                        /* mutationRate= */ 0.2,
+                        /* mutationRate= */ 0.12,
                         Config.SelectionType.RouletteWheel,
                         Config.CrossoverType.SinglePoint,
                         /* crossoverRate= */ 1,
                         /* elitism= */ 2,
-                        /* maxGenerations= */ 500));
+                        /* maxGenerations= */ 1000));
 
     ExecutorService executor =
         Executors.newFixedThreadPool(
