@@ -4,13 +4,13 @@ import java.util.Arrays;
 
 public abstract class Chromosome {
 
-  private final Point[] genes;
+  private final Gene[] genes;
 
-  protected Chromosome(Point[] points) {
+  protected Chromosome(Gene[] points) {
     this.genes = points;
   }
 
-  public Point[] getGenes() {
+  public Gene[] getGenes() {
     return Arrays.copyOf(genes, genes.length);
   }
 

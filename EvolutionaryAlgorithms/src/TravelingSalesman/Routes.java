@@ -29,7 +29,7 @@ public class Routes extends Generation {
   }
 
   @Override
-  protected Chromosome newChromosome(Point[] genes, Random random) {
+  protected Chromosome newChromosome(Gene[] genes, Random random) {
     return new Route(genes, random);
   }
 

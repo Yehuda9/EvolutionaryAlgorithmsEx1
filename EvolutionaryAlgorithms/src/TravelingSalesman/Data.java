@@ -1,6 +1,5 @@
 package TravelingSalesman;
 
-import Common.Point;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -20,13 +19,6 @@ public class Data {
       p = new ArrayList<>();
     }
     points = p;
-  }
-
-  public static Data getInstance(String path) {
-    if (instance == null) {
-      instance = new Data(path);
-    }
-    return instance;
   }
 
   public static Data getInstance() {

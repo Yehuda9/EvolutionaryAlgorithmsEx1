@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 
 public class Evolution {
   private static final long SEED = 3447761810369037120L;
-  public final Random random = new Random(/*SEED*/ );
+  public final Random random = new Random(SEED);
 
   public void tryRunEvolution(
       Config.ProblemType problemType,

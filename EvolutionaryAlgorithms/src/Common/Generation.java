@@ -39,7 +39,7 @@ public abstract class Generation {
 
   protected abstract Generation emptyGeneration();
 
-  protected abstract Chromosome newChromosome(Point[] genes, Random random);
+  protected abstract Chromosome newChromosome(Gene[] genes, Random random);
 
   protected abstract Chromosome getFittest();
 
@@ -70,7 +70,7 @@ public abstract class Generation {
   private Pair<Chromosome> singlePointCrossover(Chromosome parent1, Chromosome parent2) {
     int childSize = Math.min(parent1.size(), parent2.size());
     int crossoverPoint = random.nextInt(childSize);
-    List<Point> genes1 =
+    List<Gene> genes1 =
         new ArrayList<>(Arrays.stream(parent1.getGenes(), 0, crossoverPoint).toList());
     genes1.addAll(
         Arrays.stream(parent2.getGenes())
@@ -78,7 +78,7 @@ public abstract class Generation {
             .limit(childSize - genes1.size())
             .toList());
 
-    List<Point> genes2 =
+    List<Gene> genes2 =
         new ArrayList<>(Arrays.stream(parent2.getGenes(), 0, crossoverPoint).toList());
     genes2.addAll(
         Arrays.stream(parent1.getGenes())
@@ -87,8 +87,8 @@ public abstract class Generation {
             .toList());
 
     return new Pair<>(
-        newChromosome(genes1.toArray(Point[]::new), this.random),
-        newChromosome(genes2.toArray(Point[]::new), this.random));
+        newChromosome(genes1.toArray(Gene[]::new), this.random),
+        newChromosome(genes2.toArray(Gene[]::new), this.random));
   }
 
   private Pair<Chromosome> twoPointsCrossover(Chromosome parent1, Chromosome parent2) {
@@ -102,17 +102,16 @@ public abstract class Generation {
     int start = Math.min(crossoverPoint1, crossoverPoint2);
     int end = Math.max(crossoverPoint1, crossoverPoint2);
 
-    List<Point> parent1Genes = Arrays.stream(parent1.getGenes()).toList();
-    List<Point> parent2Genes = Arrays.stream(parent2.getGenes()).toList();
+    List<Gene> parent1Genes = Arrays.stream(parent1.getGenes()).toList();
+    List<Gene> parent2Genes = Arrays.stream(parent2.getGenes()).toList();
 
-    List<Point> child11 = new ArrayList<>(parent1Genes.subList(0, start));
-    List<Point> child12 = new ArrayList<>(parent1Genes.subList(end, parent2Genes.size()));
-    List<Point> child1 =
-        new ArrayList<>(Stream.concat(child11.stream(), child12.stream()).toList());
-    List<Point> child2 = new ArrayList<>(parent2Genes.subList(start, end));
+    List<Gene> child11 = new ArrayList<>(parent1Genes.subList(0, start));
+    List<Gene> child12 = new ArrayList<>(parent1Genes.subList(end, parent2Genes.size()));
+    List<Gene> child1 = new ArrayList<>(Stream.concat(child11.stream(), child12.stream()).toList());
+    List<Gene> child2 = new ArrayList<>(parent2Genes.subList(start, end));
 
-    List<Point> child1Remain = parent2Genes.stream().filter(i -> !child1.contains(i)).toList();
-    List<Point> child2Remain = parent1Genes.stream().filter(i -> !child2.contains(i)).toList();
+    List<Gene> child1Remain = parent2Genes.stream().filter(i -> !child1.contains(i)).toList();
+    List<Gene> child2Remain = parent1Genes.stream().filter(i -> !child2.contains(i)).toList();
 
     child1.clear();
     child1.addAll(child11);
@@ -121,8 +120,8 @@ public abstract class Generation {
     child2.addAll(child2Remain);
 
     return new Pair<>(
-        newChromosome(child1.toArray(Point[]::new), this.random),
-        newChromosome(child2.toArray(Point[]::new), this.random));
+        newChromosome(child1.toArray(Gene[]::new), this.random),
+        newChromosome(child2.toArray(Gene[]::new), this.random));
   }
 
   private Chromosome select(Config.SelectionType selectionType) {

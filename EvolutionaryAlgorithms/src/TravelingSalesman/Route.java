@@ -1,7 +1,7 @@
 package TravelingSalesman;
 
 import Common.Chromosome;
-import Common.Point;
+import Common.Gene;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -16,7 +16,7 @@ public class Route extends Chromosome {
         random);
   }
 
-  public Route(Point[] genes, Random random) {
+  public Route(Gene[] genes, Random random) {
     super(genes);
     if (Arrays.stream(genes).distinct().count() != genes.length) {
       throw new IllegalArgumentException("Duplicate gene value");
@@ -31,7 +31,7 @@ public class Route extends Chromosome {
 
   @Override
   public Chromosome mutate(double mutationRate) {
-    Point[] newGenes = getGenes();
+    Gene[] newGenes = getGenes();
     if (random.nextDouble() < mutationRate) {
       int index1 = random.nextInt(newGenes.length);
       int index2 = random.nextInt(newGenes.length);
@@ -40,7 +40,7 @@ public class Route extends Chromosome {
         index2 = random.nextInt(newGenes.length);
       }
 
-      Point temp = newGenes[index1];
+      Gene temp = newGenes[index1];
       newGenes[index1] = newGenes[index2];
       newGenes[index2] = temp;
     }
@@ -49,15 +49,16 @@ public class Route extends Chromosome {
 
   private double getFitness() {
     double distance = 0;
-    Point[] genes = getGenes();
+    Gene[] genes = getGenes();
     for (int i = 0; i < genes.length; i++) {
-      distance += genes[i].distanceTo(genes[(i + 1) % genes.length]);
+      distance += ((Point) genes[i]).distanceTo(((Point) genes[(i + 1) % genes.length]));
     }
     return distance;
   }
 
   @Override
   public String toString() {
-    return Arrays.toString(Arrays.stream(getGenes()).mapToInt(data::getIndexOf).toArray());
+    return Arrays.toString(
+        Arrays.stream(getGenes()).mapToInt(gene -> data.getIndexOf((Point) gene)).toArray());
   }
 }
