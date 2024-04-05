@@ -2,6 +2,7 @@ package Common;
 
 import EightQueenPuzzle.*;
 import TravelingSalesman.*;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -116,6 +117,17 @@ public class Evolution {
                 String.valueOf(elitism),
                 String.valueOf(maxGenerations),
                 chromosomeToString(best, problemType)));
+
+    if (problemType == Config.ProblemType.TravelingSalesman) {
+      FileWriter writer = new FileWriter("../tsp.txt", false);
+      writer.write(
+          String.join(
+              "\n",
+              Arrays.stream(best.getGenes())
+                  .map(gene -> String.valueOf(Data.getInstance().getIndexOf((Point) gene) + 1))
+                  .toList()));
+      writer.close();
+    }
   }
 
   private Generation newGeneration(
