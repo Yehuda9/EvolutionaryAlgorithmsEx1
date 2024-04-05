@@ -1,14 +1,10 @@
 package TravelingSalesman;
 
-// implement a greedy implementation for TSP as follows: Starting from A, at each step move to the
-// closest unvisited city
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-// try to start the path from every city and return the shortest path
 public class Greedy {
 
   public static Point[] solve() {
