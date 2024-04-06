@@ -71,6 +71,7 @@ public class Evolution {
 
     DataLogger dataLogger = new DataLogger(String.format("../logs/%s.csv", uuid));
 
+    long startTime = System.currentTimeMillis();
     Generation generation = newGeneration(problemType, generationSize, chromosomeSize, random);
     for (int i = 0; i < maxGenerations; i++) {
       generation =
@@ -92,6 +93,7 @@ public class Evolution {
                 "uuid",
                 "Problem Type",
                 "Best Fitness",
+                "Run Time",
                 "Generation Size",
                 "Chromosome Size",
                 "Mutation Rate",
@@ -108,6 +110,7 @@ public class Evolution {
                 uuid,
                 problemType.name(),
                 String.valueOf(best.fitness()),
+                String.valueOf((System.currentTimeMillis() - startTime) / 1000.0),
                 String.valueOf(generationSize),
                 String.valueOf(chromosomeSize),
                 String.valueOf(mutationRate),
